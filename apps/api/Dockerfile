@@ -4,10 +4,12 @@
 
 FROM oven/bun:1.3-slim AS deps
 WORKDIR /repo
-COPY package.json bun.lock turbo.json tsconfig.base.json ./
+COPY package.json bun.lock turbo.json tsconfig.json ./
 COPY apps/api/package.json apps/api/
+COPY apps/web/package.json apps/web/
 COPY packages/contracts/package.json packages/contracts/
-RUN bun install --frozen-lockfile
+COPY packages/ui/package.json packages/ui/
+RUN bun install --frozen-lockfile --ignore-scripts
 
 FROM deps AS build
 COPY apps/api ./apps/api
