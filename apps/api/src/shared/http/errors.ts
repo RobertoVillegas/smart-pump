@@ -1,7 +1,9 @@
-export class AppError extends Error {
-  public readonly statusCode: number;
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 
-  constructor(message: string, statusCode: number) {
+export class AppError extends Error {
+  public readonly statusCode: ContentfulStatusCode;
+
+  constructor(message: string, statusCode: ContentfulStatusCode) {
     super(message);
     this.name = "AppError";
     this.statusCode = statusCode;

@@ -1,6 +1,6 @@
 import { createApp } from "./app";
 
-const app = createApp();
+const app = await createApp();
 
 export default {
   fetch: app.fetch,

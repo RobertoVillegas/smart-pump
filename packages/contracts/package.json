@@ -1,0 +1,21 @@
+{
+  "name": "@smart-pump/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./auth": "./src/auth.ts",
+    "./users": "./src/users.ts"
+  },
+  "scripts": {
+    "lint": "ultracite check",
+    "format": "ultracite fix",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
