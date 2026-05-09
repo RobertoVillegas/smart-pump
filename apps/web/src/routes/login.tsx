@@ -4,7 +4,7 @@ import { LoginForm } from "../features/auth/components/login-form";
 
 const LoginPage = () => (
   <main className="grid min-h-svh bg-background lg:grid-cols-[0.95fr_1.05fr]">
-    <section className="flex items-center px-4 py-10 sm:px-8">
+    <section className="flex items-center px-4 py-6 sm:px-8 sm:py-10">
       <div className="mx-auto w-full max-w-md rounded-lg border bg-card p-6">
         <img
           alt="SMART Pump"

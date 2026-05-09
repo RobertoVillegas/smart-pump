@@ -87,4 +87,7 @@ const AccountPage = () => {
   );
 };
 
-export const Route = createFileRoute("/app")({ component: AccountPage });
+export const Route = createFileRoute("/app")({
+  component: AccountPage,
+  ssr: false,
+});
