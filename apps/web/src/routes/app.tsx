@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Button } from "@workspace/ui/components/button";
 import {
   Empty,
@@ -10,26 +10,23 @@ import {
 } from "@workspace/ui/components/empty";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { OctagonXIcon } from "lucide-react";
-import { useEffect } from "react";
 
 import { AppShell } from "../components/app-shell";
 import { BalanceCard } from "../features/account/components/balance-card";
 import { ProfileCard } from "../features/account/components/profile-card";
 import { ProfileForm } from "../features/account/components/profile-form";
 import { useMe } from "../features/account/hooks/use-me";
-import { useSession } from "../features/auth/hooks/use-session";
+import {
+  sessionQueryKey,
+  useSession,
+} from "../features/auth/hooks/use-session";
+import { getSession } from "../features/auth/lib/auth.api";
+import { queryClient } from "../lib/query-client";
 
 const AccountPage = () => {
-  const navigate = useNavigate();
   const session = useSession();
   const me = useMe(session.data?.authenticated === true);
   const user = me.data?.user;
-
-  useEffect(() => {
-    if (session.data && !session.data.authenticated) {
-      void navigate({ to: "/login" });
-    }
-  }, [navigate, session.data]);
 
   if (session.isLoading || me.isLoading) {
     return (
@@ -88,6 +85,16 @@ const AccountPage = () => {
 };
 
 export const Route = createFileRoute("/app")({
+  beforeLoad: async () => {
+    const session = await queryClient.ensureQueryData({
+      queryFn: getSession,
+      queryKey: sessionQueryKey,
+    });
+
+    if (!session.authenticated) {
+      throw redirect({ to: "/login" });
+    }
+  },
   component: AccountPage,
   ssr: false,
 });

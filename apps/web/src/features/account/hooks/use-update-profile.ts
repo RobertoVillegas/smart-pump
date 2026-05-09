@@ -21,7 +21,10 @@ export const useUpdateProfile = () => {
         queryClient.invalidateQueries({ queryKey: meQueryKey }),
         queryClient.invalidateQueries({ queryKey: balanceQueryKey }),
       ]);
-      toast.success({ title: "Profile updated" });
+      toast.success({
+        description: "Your editable profile details were saved.",
+        title: "Profile details updated",
+      });
     },
   });
 };

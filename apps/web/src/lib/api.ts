@@ -1,6 +1,7 @@
 import type { ZodSchema } from "zod";
 
 import { env } from "../env";
+import { queryClient } from "./query-client";
 
 interface ApiErrorBody {
   error?: {
@@ -34,6 +35,18 @@ export const apiRequest = async <TResponse>(
 
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as ApiErrorBody;
+
+    if (
+      response.status === 401 &&
+      path.startsWith("/users/") &&
+      typeof window !== "undefined"
+    ) {
+      queryClient.removeQueries();
+
+      if (window.location.pathname !== "/login") {
+        window.location.assign("/login");
+      }
+    }
 
     throw new ApiError(
       body.error?.message ?? "Request failed",

@@ -100,7 +100,7 @@ const ToastList = () => {
 export const Toaster = () => (
   <Toast.Provider toastManager={toastManager}>
     <Toast.Portal>
-      <Toast.Viewport className="fixed top-4 right-4 z-50 flex w-[min(360px,calc(100vw-2rem))] outline-0">
+      <Toast.Viewport className="fixed top-4 left-1/2 z-50 flex w-[min(360px,calc(100vw-2rem))] -translate-x-1/2 outline-0 sm:right-4 sm:left-auto sm:translate-x-0">
         <ToastList />
       </Toast.Viewport>
     </Toast.Portal>
