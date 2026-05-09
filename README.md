@@ -71,7 +71,17 @@ docker build -f apps/web/Dockerfile \
 ## CI
 
 GitHub Actions runs `lint`, `typecheck`, API unit tests, the production build,
-and the full Playwright suite on every PR and push to `main`.
+and the full Playwright suite on every PR and push to `main`. On push to
+`main`, after both jobs pass, both Docker images are built and pushed to GHCR:
+
+- `ghcr.io/robertovillegas/smart-pump-api:latest`
+- `ghcr.io/robertovillegas/smart-pump-web:latest`
+
+Each image is also tagged with the short commit SHA. After the first push,
+visit
+<https://github.com/users/RobertoVillegas/packages/container/smart-pump-api/settings>
+(and the equivalent `smart-pump-web`) to flip visibility to public if you want
+them pullable without auth.
 
 ## Common commands
 
