@@ -14,6 +14,10 @@ import { registerModules } from "./register-modules";
 
 type AppOptions = BuildDepsOptions;
 
+interface CreateAppOptions extends AppOptions {
+  logger?: boolean;
+}
+
 const statusByErrorKind = {
   bad_request: 400,
   conflict: 409,
@@ -52,7 +56,7 @@ const handleError: ErrorHandler = (error, context) => {
   );
 };
 
-export const createApp = async (options: AppOptions = {}) => {
+export const createApp = async (options: CreateAppOptions = {}) => {
   const deps = await buildDeps(options);
   const app = new Hono();
 
@@ -63,7 +67,9 @@ export const createApp = async (options: AppOptions = {}) => {
     })
   );
   app.use(secureHeaders());
-  app.use(logger());
+  if (options.logger ?? true) {
+    app.use(logger());
+  }
   app.onError(handleError);
 
   app.get("/", (context) =>

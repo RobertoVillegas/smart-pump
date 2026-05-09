@@ -17,6 +17,7 @@
     "lint": "ultracite check",
     "format": "ultracite fix",
     "preview:web": "turbo preview --filter=web",
+    "smoke:api": "bun -e \"fetch('http://localhost:3001/health').then((response) => process.exit(response.ok ? 0 : 1)).catch(() => process.exit(1))\"",
     "start:api": "turbo start --filter=@smart-pump/api",
     "test:api": "turbo test --filter=@smart-pump/api",
     "typecheck": "turbo typecheck",

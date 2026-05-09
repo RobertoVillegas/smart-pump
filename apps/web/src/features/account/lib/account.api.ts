@@ -1,19 +1,19 @@
-import type {
-  BalanceResponse,
-  UpdateProfileRequest,
-  UpdateProfileResponse,
-  UserProfileResponse,
+import {
+  balanceResponseSchema,
+  updateProfileResponseSchema,
+  userProfileResponseSchema,
 } from "@smart-pump/contracts/users";
+import type { UpdateProfileRequest } from "@smart-pump/contracts/users";
 
 import { apiRequest } from "../../../lib/api";
 
-export const getMe = () => apiRequest<UserProfileResponse>("/users/me");
+export const getMe = () => apiRequest("/users/me", userProfileResponseSchema);
 
 export const getBalance = () =>
-  apiRequest<BalanceResponse>("/users/me/balance");
+  apiRequest("/users/me/balance", balanceResponseSchema);
 
 export const updateMe = (body: UpdateProfileRequest) =>
-  apiRequest<UpdateProfileResponse>("/users/me", {
+  apiRequest("/users/me", updateProfileResponseSchema, {
     body: JSON.stringify(body),
     method: "PATCH",
   });

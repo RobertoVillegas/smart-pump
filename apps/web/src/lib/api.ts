@@ -1,3 +1,5 @@
+import type { ZodSchema } from "zod";
+
 import { env } from "../env";
 
 interface ApiErrorBody {
@@ -18,6 +20,7 @@ export class ApiError extends Error {
 
 export const apiRequest = async <TResponse>(
   path: string,
+  schema: ZodSchema<TResponse>,
   init: RequestInit = {}
 ): Promise<TResponse> => {
   const response = await fetch(`${env.apiUrl}${path}`, {
@@ -38,5 +41,5 @@ export const apiRequest = async <TResponse>(
     );
   }
 
-  return (await response.json()) as TResponse;
+  return schema.parse(await response.json());
 };

@@ -166,6 +166,7 @@ bun run build:web                 # web production build
 bun run typecheck                 # all packages
 bun run test:api                  # API unit/integration tests (Vitest)
 bun run test:e2e                  # Playwright E2E (desktop + mobile)
+bun run smoke:api                 # health check a running local API
 bun run lint                      # ultracite check
 bun run format                    # ultracite fix
 ```
