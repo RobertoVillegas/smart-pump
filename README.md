@@ -47,6 +47,32 @@ password: 23derd*334
 Additional seed accounts (including an inactive one for testing rejection) live
 in `data/users.json`.
 
+## Docker
+
+Each app has its own multi-stage `Dockerfile` (built from the repo root so
+workspace deps resolve). For local convenience:
+
+```bash
+docker compose up --build
+```
+
+- Web → http://localhost:3000
+- API → http://localhost:3001
+- Seed `data/users.json` is mounted into the api container as a volume.
+
+The web image inlines `VITE_API_URL` at build time. To target a different API:
+
+```bash
+docker build -f apps/web/Dockerfile \
+  --build-arg VITE_API_URL=https://api.example.com \
+  -t smart-pump-web .
+```
+
+## CI
+
+GitHub Actions runs `lint`, `typecheck`, API unit tests, the production build,
+and the full Playwright suite on every PR and push to `main`.
+
 ## Common commands
 
 ```bash
