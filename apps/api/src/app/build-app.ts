@@ -3,12 +3,9 @@ import type { ErrorHandler } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
+import type { ContentfulStatusCode } from "hono/utils/http-status";
 
-import { InactiveUserError } from "../modules/auth/domain/errors/inactive-user.error";
-import { InvalidCredentialsError } from "../modules/auth/domain/errors/invalid-credentials.error";
-import { UnauthorizedError } from "../modules/auth/domain/errors/unauthorized.error";
-import { ForbiddenProfileUpdateError } from "../modules/users/domain/errors/forbidden-profile-update.error";
-import { UserNotFoundError } from "../modules/users/domain/errors/user-not-found.error";
+import { AppError } from "../shared/errors/app-error";
 import { HttpError } from "../shared/http/errors";
 import type { BuildDepsOptions } from "./build-deps";
 import { buildDeps } from "./build-deps";
@@ -16,29 +13,26 @@ import { registerModules } from "./register-modules";
 
 type AppOptions = BuildDepsOptions;
 
+const statusByErrorKind = {
+  bad_request: 400,
+  conflict: 409,
+  forbidden: 403,
+  not_found: 404,
+  unauthorized: 401,
+  validation: 422,
+} as const satisfies Record<AppError["kind"], ContentfulStatusCode>;
+
 const toHttpError = (error: Error): HttpError => {
-  if (error instanceof InvalidCredentialsError) {
-    return new HttpError(error.message, 401);
-  }
-
-  if (error instanceof InactiveUserError) {
-    return new HttpError(error.message, 403);
-  }
-
-  if (error instanceof UnauthorizedError) {
-    return new HttpError(error.message, 401);
-  }
-
-  if (error instanceof ForbiddenProfileUpdateError) {
-    return new HttpError(error.message, 403);
-  }
-
-  if (error instanceof UserNotFoundError) {
-    return new HttpError(error.message, 404);
-  }
-
   if (error instanceof HttpError) {
     return error;
+  }
+
+  if (error instanceof AppError) {
+    return new HttpError(error.message, statusByErrorKind[error.kind], {
+      cause: error,
+      code: error.code,
+      details: error.details,
+    });
   }
 
   return new HttpError("Internal server error", 500);

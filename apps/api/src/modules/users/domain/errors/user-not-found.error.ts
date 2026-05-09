@@ -1,6 +1,14 @@
-export class UserNotFoundError extends Error {
+import { AppError } from "../../../../shared/errors/app-error";
+
+export class UserNotFoundError extends AppError {
   constructor() {
-    super("User not found");
+    super({
+      code: "USER_NOT_FOUND",
+      details:
+        "A user lookup returned no matching record for the requested identifier.",
+      kind: "not_found",
+      message: "User not found",
+    });
     this.name = "UserNotFoundError";
   }
 }
