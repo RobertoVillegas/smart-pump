@@ -1,10 +1,13 @@
 import type { UserProfile } from "@smart-pump/contracts/users";
 
+import { UserAvatar } from "./user-avatar";
+
 interface ProfileCardProps {
   user: UserProfile;
 }
 
 export const ProfileCard = ({ user }: ProfileCardProps) => {
+  const fullName = `${user.firstName} ${user.lastName}`;
   const rows = [
     ["Email", user.email],
     ["Company", user.company],
@@ -17,15 +20,9 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
   return (
     <section className="rounded-lg border bg-card p-5">
       <div className="flex items-start gap-4">
-        <img
-          alt={`${user.firstName} ${user.lastName}`}
-          className="size-14 rounded-md border bg-muted object-cover"
-          src={user.picture}
-        />
+        <UserAvatar name={fullName} />
         <div className="min-w-0">
-          <h2 className="font-heading font-semibold text-xl">
-            {user.firstName} {user.lastName}
-          </h2>
+          <h2 className="font-heading font-semibold text-xl">{fullName}</h2>
           <p className="text-muted-foreground text-sm">
             {user.isActive ? "Active account" : "Inactive account"}
           </p>
