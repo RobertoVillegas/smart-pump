@@ -1,8 +1,18 @@
+import { isValidPhoneNumber } from "libphonenumber-js/min";
 import { z } from "zod";
+
+const phoneNumberSchema = z
+  .string()
+  .trim()
+  .min(1, "Enter a phone number.")
+  .refine(isValidPhoneNumber, "Enter a valid phone number.");
 
 export const userProfileSchema = z.object({
   address: z.string(),
-  age: z.number().int().min(0),
+  age: z
+    .number("Enter a valid number.")
+    .int("Enter a whole number.")
+    .min(0, "Enter a positive number."),
   company: z.string(),
   email: z.email(),
   eyeColor: z.string(),
@@ -10,7 +20,7 @@ export const userProfileSchema = z.object({
   id: z.string(),
   isActive: z.boolean(),
   lastName: z.string(),
-  phone: z.string(),
+  phone: phoneNumberSchema,
   picture: z.string(),
 });
 
@@ -20,12 +30,16 @@ export const balanceResponseSchema = z.object({
 
 export const updateProfileRequestSchema = z
   .object({
-    address: z.string().min(1).optional(),
-    age: z.number().int().min(0).optional(),
-    eyeColor: z.string().min(1).optional(),
-    firstName: z.string().min(1).optional(),
-    lastName: z.string().min(1).optional(),
-    phone: z.string().min(1).optional(),
+    address: z.string().trim().min(1, "Enter an address.").optional(),
+    age: z
+      .number("Enter a valid number.")
+      .int("Enter a whole number.")
+      .min(0, "Enter a positive number.")
+      .optional(),
+    eyeColor: z.string().trim().min(1, "Enter an eye color.").optional(),
+    firstName: z.string().trim().min(1, "Enter a first name.").optional(),
+    lastName: z.string().trim().min(1, "Enter a last name.").optional(),
+    phone: phoneNumberSchema.optional(),
   })
   .strict();
 

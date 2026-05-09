@@ -12,6 +12,9 @@ import type { HTMLInputTypeAttribute } from "react";
 import { useEffect } from "react";
 import type { Control } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
+import PhoneInput from "react-phone-number-input";
+
+import "react-phone-number-input/style.css";
 
 import { useUpdateProfile } from "../hooks/use-update-profile";
 
@@ -61,6 +64,32 @@ const ProfileField = ({
   />
 );
 
+const ProfilePhoneField = ({
+  control,
+}: {
+  control: Control<UpdateProfileRequest>;
+}) => (
+  <Controller
+    control={control}
+    name="phone"
+    render={({ field, fieldState }) => (
+      <Field data-invalid={fieldState.invalid}>
+        <FieldLabel htmlFor={field.name}>Phone</FieldLabel>
+        <PhoneInput
+          aria-invalid={fieldState.invalid}
+          className="flex h-9 w-full rounded-md border border-input bg-transparent px-2.5 shadow-xs transition-[color,box-shadow] has-[:focus-visible]:border-ring has-[:focus-visible]:ring-3 has-[:focus-visible]:ring-ring/50 has-[input[aria-invalid=true]]:border-destructive has-[input[aria-invalid=true]]:ring-3 has-[input[aria-invalid=true]]:ring-destructive/20 dark:bg-input/30 dark:has-[input[aria-invalid=true]]:border-destructive/50 dark:has-[input[aria-invalid=true]]:ring-destructive/40 [&_.PhoneInputCountry]:mr-2 [&_.PhoneInputCountrySelect]:focus:outline-none [&_.PhoneInputInput]:min-w-0 [&_.PhoneInputInput]:flex-1 [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:text-base [&_.PhoneInputInput]:outline-none md:[&_.PhoneInputInput]:text-sm"
+          defaultCountry="US"
+          id={field.name}
+          international
+          onChange={(value) => field.onChange(value ?? "")}
+          value={field.value ? String(field.value) : ""}
+        />
+        {fieldState.invalid ? <FieldError errors={[fieldState.error]} /> : null}
+      </Field>
+    )}
+  />
+);
+
 export const ProfileForm = ({ user }: ProfileFormProps) => {
   const updateProfile = useUpdateProfile();
   const form = useForm<UpdateProfileRequest>({
@@ -103,7 +132,7 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
           label="Last name"
           name="lastName"
         />
-        <ProfileField control={form.control} label="Phone" name="phone" />
+        <ProfilePhoneField control={form.control} />
         <ProfileField
           control={form.control}
           label="Age"

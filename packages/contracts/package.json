@@ -13,6 +13,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
+    "libphonenumber-js": "^1.13.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

@@ -171,7 +171,7 @@ describe("API", () => {
     const validResponse = await context.app.request("/users/me", {
       body: JSON.stringify({
         firstName: "Updated",
-        phone: "+1 (555) 000-0000",
+        phone: "+1 (213) 373-4253",
       }),
       headers: {
         "content-type": "application/json",
@@ -183,7 +183,7 @@ describe("API", () => {
 
     expect(validResponse.status).toBe(200);
     expect(body.user.firstName).toBe("Updated");
-    expect(body.user.phone).toBe("+1 (555) 000-0000");
+    expect(body.user.phone).toBe("+1 (213) 373-4253");
     expect("balance" in body.user).toBeFalsy();
   });
 
