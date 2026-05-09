@@ -1,14 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
 import type { PropsWithChildren } from "react";
 
 import { useLogout } from "../features/auth/hooks/use-logout";
+import { NavUser } from "./nav-user";
 
 type AppShellProps = PropsWithChildren<{
-  userName?: string;
+  user?: {
+    email: string;
+    name: string;
+  };
 }>;
 
-export const AppShell = ({ children, userName }: AppShellProps) => {
+export const AppShell = ({ children, user }: AppShellProps) => {
   const logout = useLogout();
 
   return (
@@ -25,21 +28,14 @@ export const AppShell = ({ children, userName }: AppShellProps) => {
               SMART Pump
             </span>
           </Link>
-          <div className="flex items-center gap-3">
-            {userName ? (
-              <span className="hidden text-muted-foreground text-sm sm:inline">
-                {userName}
-              </span>
-            ) : null}
-            <Button
-              disabled={logout.isPending}
-              onClick={() => logout.mutate()}
-              size="sm"
-              variant="outline"
-            >
-              Sign out
-            </Button>
-          </div>
+          {user ? (
+            <NavUser
+              email={user.email}
+              isSigningOut={logout.isPending}
+              name={user.name}
+              onSignOut={() => logout.mutate()}
+            />
+          ) : null}
         </div>
       </header>
       <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">{children}</main>

@@ -13,6 +13,7 @@ import { ProfileField } from "./profile-field";
 import { ProfilePhoneField } from "./profile-phone-field";
 
 interface ProfileFormProps {
+  onSaved?: () => void;
   user: UserProfile;
 }
 
@@ -25,7 +26,7 @@ const getProfileFormValues = (user: UserProfile): UpdateProfileRequest => ({
   phone: user.phone,
 });
 
-export const ProfileForm = ({ user }: ProfileFormProps) => {
+export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
   const updateProfile = useUpdateProfile();
   const form = useForm<UpdateProfileRequest>({
     resolver: zodResolver(updateProfileRequestSchema),
@@ -37,7 +38,9 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
       <h2 className="font-heading font-semibold text-lg">Personal details</h2>
       <form
         className="mt-5 grid gap-4 sm:grid-cols-2"
-        onSubmit={form.handleSubmit((values) => updateProfile.mutate(values))}
+        onSubmit={form.handleSubmit((values) =>
+          updateProfile.mutate(values, { onSuccess: onSaved })
+        )}
       >
         <ProfileField
           control={form.control}

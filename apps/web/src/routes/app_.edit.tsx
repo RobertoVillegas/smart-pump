@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { Button, buttonVariants } from "@workspace/ui/components/button";
 import {
   Empty,
   EmptyContent,
@@ -9,16 +9,16 @@ import {
   EmptyTitle,
 } from "@workspace/ui/components/empty";
 import { Spinner } from "@workspace/ui/components/spinner";
-import { OctagonXIcon } from "lucide-react";
+import { ArrowLeftIcon, OctagonXIcon } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
-import { BalanceCard } from "../features/account/components/balance-card";
-import { ProfileCard } from "../features/account/components/profile-card";
+import { ProfileForm } from "../features/account/components/profile-form";
 import { useMe } from "../features/account/hooks/use-me";
 import { useSession } from "../features/auth/hooks/use-session";
 import { requireAuthenticatedSession } from "../features/auth/lib/require-authenticated-session";
 
-const AccountPage = () => {
+const EditAccountPage = () => {
+  const navigate = useNavigate();
   const session = useSession();
   const me = useMe(session.data?.authenticated === true);
   const user = me.data?.user;
@@ -65,21 +65,31 @@ const AccountPage = () => {
       user={{ email: user.email, name: `${user.firstName} ${user.lastName}` }}
     >
       <div className="mb-6">
-        <h1 className="font-heading font-semibold text-3xl">Account</h1>
+        <Link className={buttonVariants({ variant: "ghost" })} to="/app">
+          <ArrowLeftIcon aria-hidden="true" />
+          Account
+        </Link>
+        <h1 className="mt-4 font-heading font-semibold text-3xl">
+          Edit details
+        </h1>
         <p className="mt-2 text-muted-foreground">
-          View your profile, check your balance, and keep details current.
+          Update the profile details shown on your account.
         </p>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <ProfileCard user={user} />
-        <BalanceCard />
+      <div className="max-w-3xl">
+        <ProfileForm
+          user={user}
+          onSaved={() => {
+            navigate({ to: "/app" });
+          }}
+        />
       </div>
     </AppShell>
   );
 };
 
-export const Route = createFileRoute("/app")({
+export const Route = createFileRoute("/app_/edit")({
   beforeLoad: requireAuthenticatedSession,
-  component: AccountPage,
+  component: EditAccountPage,
   ssr: false,
 });
