@@ -1,12 +1,16 @@
-import { updateProfileRequestSchema } from "@smart-pump/contracts/users";
+import {
+  updateProfileRequestSchema,
+  userProfileSchema,
+} from "@smart-pump/contracts/users";
 import { Hono } from "hono";
 
 import { createAuthMiddleware } from "../../../../../shared/auth/auth.middleware";
 import type { AuthVariables } from "../../../../../shared/auth/auth.middleware";
-import { AppError } from "../../../../../shared/http/errors";
 import { validate } from "../../../../../shared/http/validation";
 import type { SessionRepository } from "../../../../auth/domain/repositories/session.repository";
-import { toUserProfile } from "../../../domain/mappers/user.mapper";
+import { createGetBalanceUseCase } from "../../../application/use-cases/get-balance.use-case";
+import { createGetMeUseCase } from "../../../application/use-cases/get-me.use-case";
+import { createUpdateMeUseCase } from "../../../application/use-cases/update-me.use-case";
 import type { UserRepository } from "../../../domain/repositories/user.repository";
 
 interface UserRouteDeps {
@@ -17,33 +21,24 @@ interface UserRouteDeps {
 export const createUserRoutes = ({ sessions, users }: UserRouteDeps) => {
   const app = new Hono<{ Variables: AuthVariables }>();
   const requireAuth = createAuthMiddleware({ sessions, users });
+  const getMe = createGetMeUseCase({ users });
+  const getBalance = createGetBalanceUseCase({ users });
+  const updateMe = createUpdateMeUseCase({ users });
 
   app.use("*", requireAuth);
 
   app.get("/me", async (context) => {
     const currentUser = context.get("user");
-    const user = await users.findById(currentUser.id);
+    const user = await getMe(currentUser.id);
 
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
-
-    return context.json({
-      user: toUserProfile(user),
-    });
+    return context.json({ user: userProfileSchema.parse(user) });
   });
 
   app.get("/me/balance", async (context) => {
     const currentUser = context.get("user");
-    const user = await users.findById(currentUser.id);
+    const result = await getBalance(currentUser.id);
 
-    if (!user) {
-      throw new AppError("User not found", 404);
-    }
-
-    return context.json({
-      balance: user.balance,
-    });
+    return context.json(result);
   });
 
   app.patch(
@@ -52,15 +47,9 @@ export const createUserRoutes = ({ sessions, users }: UserRouteDeps) => {
     async (context) => {
       const currentUser = context.get("user");
       const profile = context.req.valid("json");
-      const user = await users.updateProfile(currentUser.id, profile);
+      const user = await updateMe(currentUser.id, profile);
 
-      if (!user) {
-        throw new AppError("User not found", 404);
-      }
-
-      return context.json({
-        user: toUserProfile(user),
-      });
+      return context.json({ user: userProfileSchema.parse(user) });
     }
   );
 

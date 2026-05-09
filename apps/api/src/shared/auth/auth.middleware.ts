@@ -1,9 +1,9 @@
+import { sessionUserSchema } from "@smart-pump/contracts/auth";
 import type { MiddlewareHandler } from "hono";
 
+import { UnauthenticatedError } from "../../modules/auth/domain/errors/unauthenticated.error";
 import type { SessionRepository } from "../../modules/auth/domain/repositories/session.repository";
-import { toSessionUser } from "../../modules/users/domain/mappers/user.mapper";
 import type { UserRepository } from "../../modules/users/domain/repositories/user.repository";
-import { AppError } from "../http/errors";
 import type { CurrentUser } from "./current-user";
 import { getSessionCookie } from "./session-cookie";
 
@@ -25,7 +25,7 @@ export const createAuthMiddleware =
     const sessionId = getSessionCookie(context);
 
     if (!sessionId) {
-      throw new AppError("Authentication required", 401);
+      throw new UnauthenticatedError();
     }
 
     const session = await sessions.findById(sessionId);
@@ -34,17 +34,16 @@ export const createAuthMiddleware =
       if (session) {
         await sessions.deleteById(session.id);
       }
-
-      throw new AppError("Authentication required", 401);
+      throw new UnauthenticatedError();
     }
 
     const user = await users.findById(session.userId);
 
     if (!user || !user.isActive) {
-      throw new AppError("Authentication required", 401);
+      throw new UnauthenticatedError();
     }
 
-    context.set("user", toSessionUser(user));
+    context.set("user", sessionUserSchema.parse(user));
 
     await next();
   };

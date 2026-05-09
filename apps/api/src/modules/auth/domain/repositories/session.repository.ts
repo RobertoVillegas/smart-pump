@@ -1,4 +1,4 @@
-import type { SessionRecord } from "../../../../db/db.types";
+import type { Session } from "../entities/session";
 
 export interface CreateSessionInput {
   expiresAt: string;
@@ -7,7 +7,7 @@ export interface CreateSessionInput {
 }
 
 export interface SessionRepository {
-  create: (input: CreateSessionInput) => Promise<SessionRecord>;
+  create: (input: CreateSessionInput) => Promise<Session>;
   deleteById: (id: string) => Promise<void>;
-  findById: (id: string) => Promise<SessionRecord | undefined>;
+  findById: (id: string) => Promise<Session | undefined>;
 }
