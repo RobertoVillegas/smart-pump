@@ -1,8 +1,23 @@
-import { HeadContent, Scripts, createRootRoute } from "@tanstack/react-router";
+import { QueryClientProvider } from "@tanstack/react-query";
+import {
+  HeadContent,
+  Outlet,
+  Scripts,
+  createRootRoute,
+} from "@tanstack/react-router";
+import type { ReactNode } from "react";
+
+import { queryClient } from "../lib/query-client";
 
 import appCss from "@workspace/ui/globals.css?url";
 
-const RootDocument = ({ children }: { children: React.ReactNode }) => (
+const RootComponent = () => (
+  <QueryClientProvider client={queryClient}>
+    <Outlet />
+  </QueryClientProvider>
+);
+
+const RootDocument = ({ children }: { children: ReactNode }) => (
   <html lang="en">
     <head>
       <HeadContent />
@@ -15,6 +30,7 @@ const RootDocument = ({ children }: { children: React.ReactNode }) => (
 );
 
 export const Route = createRootRoute({
+  component: RootComponent,
   head: () => ({
     links: [
       {
@@ -31,7 +47,7 @@ export const Route = createRootRoute({
         name: "viewport",
       },
       {
-        title: "TanStack Start Starter",
+        title: "SMART Pump",
       },
     ],
   }),

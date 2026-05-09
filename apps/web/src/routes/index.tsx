@@ -1,16 +1,44 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { Button } from "@workspace/ui/components/button";
+import { Link, createFileRoute } from "@tanstack/react-router";
+import { buttonVariants } from "@workspace/ui/components/button";
 
 const App = () => (
-  <div className="flex min-h-svh p-6">
-    <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-      <div>
-        <h1 className="font-medium">Project ready!</h1>
-        <p>You may now add components and start building.</p>
-        <p>We&apos;ve already added the button component for you.</p>
-        <Button className="mt-2">Button</Button>
+  <div className="min-h-svh bg-background">
+    <main className="mx-auto grid min-h-svh max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.8fr]">
+      <div className="min-w-0">
+        <img
+          alt="SMART Pump"
+          className="mb-8 h-14 w-auto"
+          src="/assets/smart-pump-logo.png"
+        />
+        <h1 className="max-w-3xl font-heading font-semibold text-4xl tracking-normal sm:text-5xl">
+          Account access for SMART Pump customers
+        </h1>
+        <p className="mt-4 max-w-2xl text-lg text-muted-foreground">
+          Sign in to view your account details, check your balance, and update
+          your personal information.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <Link className={buttonVariants({})} to="/login">
+            Sign in
+          </Link>
+          <Link className={buttonVariants({ variant: "outline" })} to="/app">
+            Open account
+          </Link>
+        </div>
       </div>
-    </div>
+      <div className="rounded-lg border bg-card p-5">
+        <div className="grid gap-4 text-sm">
+          <div>
+            <p className="text-muted-foreground">Demo email</p>
+            <p className="font-medium">henderson.briggs@geeknet.net</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Demo password</p>
+            <p className="font-medium">23derd*334</p>
+          </div>
+        </div>
+      </div>
+    </main>
   </div>
 );
 

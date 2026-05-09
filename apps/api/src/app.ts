@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { ErrorHandler } from "hono";
+import { cors } from "hono/cors";
 import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 
@@ -43,6 +44,12 @@ export const createApp = async (options: AppOptions = {}) => {
   const users = createLowDbUserRepository(db);
   const app = new Hono();
 
+  app.use(
+    cors({
+      credentials: true,
+      origin: ["http://localhost:3000"],
+    })
+  );
   app.use(secureHeaders());
   app.use(logger());
   app.onError(handleError);
