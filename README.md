@@ -49,7 +49,7 @@ isolation.
 | `PORT`         | API | `3001`                  | API server port.                                      |
 | `NODE_ENV`     | API | `development`           | Runtime mode: `development`, `production`, or `test`. |
 | `CORS_ORIGINS` | API | `http://localhost:3000` | Comma-separated allowed web origins.                  |
-| `LOWDB_PATH`   | API | `data/users.json`       | LowDB JSON file path.                                 |
+| `LOWDB_PATH`   | API | `data/users.json`       | LowDB JSON file path, resolved from the repo root.    |
 | `VITE_API_URL` | Web | `http://localhost:3001` | API origin used by the browser client.                |
 
 Both apps validate environment variables with Zod. The API validates at startup;
@@ -125,7 +125,7 @@ Run the API production entrypoint with production env values:
 
 ```bash
 NODE_ENV=production PORT=3001 CORS_ORIGINS=https://app.example.com \
-  LOWDB_PATH=./data/users.json bun run start:api
+  LOWDB_PATH=data/users.json bun run start:api
 ```
 
 Preview the built web app locally. `VITE_API_URL` is read at build time, so set

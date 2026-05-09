@@ -2,6 +2,9 @@ import { resolve } from "node:path";
 
 import { z } from "zod";
 
+const repoRoot = resolve(import.meta.dirname, "../../..");
+const resolveFromRepoRoot = (path: string) => resolve(repoRoot, path);
+
 const envSchema = z.object({
   CORS_ORIGINS: z
     .string()
@@ -17,7 +20,7 @@ const envSchema = z.object({
   LOWDB_PATH: z
     .string()
     .optional()
-    .transform((value) => (value ? resolve(value) : undefined)),
+    .transform((value) => (value ? resolveFromRepoRoot(value) : undefined)),
   NODE_ENV: z
     .enum(["development", "production", "test"])
     .default("development"),
