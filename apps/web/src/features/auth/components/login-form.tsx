@@ -4,6 +4,12 @@ import type { LoginRequest } from "@smart-pump/contracts/auth";
 import { Button } from "@workspace/ui/components/button";
 import { Field, FieldError, FieldLabel } from "@workspace/ui/components/field";
 import { Input } from "@workspace/ui/components/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@workspace/ui/components/input-group";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { useHydrated } from "@workspace/ui/hooks/use-hydrated";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
@@ -70,30 +76,33 @@ export const LoginForm = () => {
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid}>
             <FieldLabel htmlFor={field.name}>Password</FieldLabel>
-            <div className="relative">
-              <Input
+            <InputGroup>
+              <InputGroupInput
                 {...field}
                 aria-invalid={fieldState.invalid}
                 autoComplete="current-password"
-                className="pr-10"
                 disabled={isDisabled}
                 id={field.name}
                 type={isPasswordVisible ? "text" : "password"}
               />
-              <Button
-                aria-label={
-                  isPasswordVisible ? "Hide password" : "Show password"
-                }
-                className="absolute top-1/2 right-1 size-7 -translate-y-1/2"
-                disabled={isDisabled}
-                onClick={() => setIsPasswordVisible((value) => !value)}
-                size="icon-sm"
-                type="button"
-                variant="ghost"
-              >
-                {isPasswordVisible ? <EyeOffIcon /> : <EyeIcon />}
-              </Button>
-            </div>
+              <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                  aria-label={
+                    isPasswordVisible ? "Hide password" : "Show password"
+                  }
+                  aria-pressed={isPasswordVisible}
+                  disabled={isDisabled}
+                  onClick={() => setIsPasswordVisible((value) => !value)}
+                  size="icon-xs"
+                >
+                  {isPasswordVisible ? (
+                    <EyeOffIcon aria-hidden="true" />
+                  ) : (
+                    <EyeIcon aria-hidden="true" />
+                  )}
+                </InputGroupButton>
+              </InputGroupAddon>
+            </InputGroup>
             {fieldState.invalid ? (
               <FieldError errors={[fieldState.error]} />
             ) : null}

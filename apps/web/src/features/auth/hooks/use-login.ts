@@ -12,7 +12,10 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: login,
     onSuccess: async (data) => {
-      await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
+      queryClient.setQueryData(sessionQueryKey, {
+        authenticated: true,
+        user: data.user,
+      });
       toast.success({
         description: `Signed in as ${data.user.firstName} ${data.user.lastName}`,
         title: "Welcome back",
