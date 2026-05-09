@@ -1,9 +1,9 @@
-import { sessionUserSchema } from "@smart-pump/contracts/auth";
 import type { MiddlewareHandler } from "hono";
 
-import { UnauthenticatedError } from "../../modules/auth/domain/errors/unauthenticated.error";
+import { UnauthorizedError } from "../../modules/auth/domain/errors/unauthorized.error";
+import { authUserToSessionPayload } from "../../modules/auth/domain/mappers/session.mapper";
+import type { AuthUserRepository } from "../../modules/auth/domain/repositories/auth-user.repository";
 import type { SessionRepository } from "../../modules/auth/domain/repositories/session.repository";
-import type { UserRepository } from "../../modules/users/domain/repositories/user.repository";
 import type { CurrentUser } from "./current-user";
 import { getSessionCookie } from "./session-cookie";
 
@@ -13,7 +13,7 @@ export interface AuthVariables {
 
 interface AuthDeps {
   sessions: SessionRepository;
-  users: UserRepository;
+  users: AuthUserRepository;
 }
 
 export const createAuthMiddleware =
@@ -25,7 +25,7 @@ export const createAuthMiddleware =
     const sessionId = getSessionCookie(context);
 
     if (!sessionId) {
-      throw new UnauthenticatedError();
+      throw new UnauthorizedError();
     }
 
     const session = await sessions.findById(sessionId);
@@ -34,16 +34,16 @@ export const createAuthMiddleware =
       if (session) {
         await sessions.deleteById(session.id);
       }
-      throw new UnauthenticatedError();
+      throw new UnauthorizedError();
     }
 
     const user = await users.findById(session.userId);
 
     if (!user || !user.isActive) {
-      throw new UnauthenticatedError();
+      throw new UnauthorizedError();
     }
 
-    context.set("user", sessionUserSchema.parse(user));
+    context.set("user", authUserToSessionPayload(user));
 
     await next();
   };

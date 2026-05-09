@@ -1,14 +1,13 @@
-import type { User } from "../../domain/entities/user";
-import { UserNotFoundError } from "../../domain/errors/user.errors";
-import type { UserRepository } from "../../domain/repositories/user.repository";
-
-interface GetMeDeps {
-  users: UserRepository;
-}
+import { UserNotFoundError } from "../../domain/errors/user-not-found.error";
+import type {
+  GetMeDeps,
+  GetMeInput,
+  GetMeOutput,
+} from "../contracts/get-me.contract";
 
 export const createGetMeUseCase =
   ({ users }: GetMeDeps) =>
-  async (userId: string): Promise<User> => {
+  async (userId: GetMeInput): Promise<GetMeOutput> => {
     const user = await users.findById(userId);
 
     if (!user) {

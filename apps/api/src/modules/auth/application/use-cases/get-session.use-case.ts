@@ -1,19 +1,12 @@
-import type { User } from "../../../users/domain/entities/user";
-import type { UserRepository } from "../../../users/domain/repositories/user.repository";
-import type { SessionRepository } from "../../domain/repositories/session.repository";
-
-interface GetSessionDeps {
-  sessions: SessionRepository;
-  users: UserRepository;
-}
-
-export type GetSessionResult =
-  | { authenticated: true; user: User }
-  | { authenticated: false; user: null; staleSessionId?: string };
+import type {
+  GetSessionDeps,
+  GetSessionInput,
+  GetSessionOutput,
+} from "../contracts/get-session.contract";
 
 export const createGetSessionUseCase =
   ({ sessions, users }: GetSessionDeps) =>
-  async (sessionId: string | undefined): Promise<GetSessionResult> => {
+  async (sessionId: GetSessionInput): Promise<GetSessionOutput> => {
     if (!sessionId) {
       return { authenticated: false, user: null };
     }

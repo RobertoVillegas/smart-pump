@@ -1,7 +1,3 @@
-import {
-  loginRequestSchema,
-  sessionUserSchema,
-} from "@smart-pump/contracts/auth";
 import { Hono } from "hono";
 
 import {
@@ -10,15 +6,17 @@ import {
   setSessionCookie,
 } from "../../../../../shared/auth/session-cookie";
 import { validate } from "../../../../../shared/http/validation";
-import type { UserRepository } from "../../../../users/domain/repositories/user.repository";
 import { createGetSessionUseCase } from "../../../application/use-cases/get-session.use-case";
 import { createLoginUseCase } from "../../../application/use-cases/login.use-case";
 import { createLogoutUseCase } from "../../../application/use-cases/logout.use-case";
+import { authUserToSessionPayload } from "../../../domain/mappers/session.mapper";
+import type { AuthUserRepository } from "../../../domain/repositories/auth-user.repository";
 import type { SessionRepository } from "../../../domain/repositories/session.repository";
+import { loginRequestSchema, sessionUserSchema } from "../schemas/login.schema";
 
 interface AuthRouteDeps {
   sessions: SessionRepository;
-  users: UserRepository;
+  users: AuthUserRepository;
 }
 
 export const createAuthRoutes = ({ sessions, users }: AuthRouteDeps) => {
@@ -34,7 +32,7 @@ export const createAuthRoutes = ({ sessions, users }: AuthRouteDeps) => {
     setSessionCookie(context, session.id);
 
     return context.json({
-      user: sessionUserSchema.parse(user),
+      user: sessionUserSchema.parse(authUserToSessionPayload(user)),
     });
   });
 
@@ -57,7 +55,7 @@ export const createAuthRoutes = ({ sessions, users }: AuthRouteDeps) => {
 
     return context.json({
       authenticated: true,
-      user: sessionUserSchema.parse(result.user),
+      user: sessionUserSchema.parse(authUserToSessionPayload(result.user)),
     });
   });
 

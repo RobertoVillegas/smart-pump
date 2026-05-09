@@ -1,12 +1,10 @@
-import type { UpdateProfileRequest } from "@smart-pump/contracts/users";
-
-import type { User } from "../entities/user";
+import type { User } from "../entities/user.entity";
+import type { EditableUserFields } from "../types/editable-user-fields.type";
 
 export interface UserRepository {
-  findByEmail: (email: string) => Promise<User | undefined>;
   findById: (id: string) => Promise<User | undefined>;
   updateProfile: (
     id: string,
-    profile: UpdateProfileRequest
+    profile: EditableUserFields
   ) => Promise<User | undefined>;
 }

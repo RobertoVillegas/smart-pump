@@ -1,13 +1,13 @@
-import { UserNotFoundError } from "../../domain/errors/user.errors";
-import type { UserRepository } from "../../domain/repositories/user.repository";
-
-interface GetBalanceDeps {
-  users: UserRepository;
-}
+import { UserNotFoundError } from "../../domain/errors/user-not-found.error";
+import type {
+  GetBalanceDeps,
+  GetBalanceInput,
+  GetBalanceOutput,
+} from "../contracts/get-balance.contract";
 
 export const createGetBalanceUseCase =
   ({ users }: GetBalanceDeps) =>
-  async (userId: string): Promise<{ balance: string }> => {
+  async (userId: GetBalanceInput): Promise<GetBalanceOutput> => {
     const user = await users.findById(userId);
 
     if (!user) {

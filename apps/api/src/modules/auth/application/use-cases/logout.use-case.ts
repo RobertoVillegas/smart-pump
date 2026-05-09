@@ -1,12 +1,8 @@
-import type { SessionRepository } from "../../domain/repositories/session.repository";
-
-interface LogoutDeps {
-  sessions: SessionRepository;
-}
+import type { LogoutDeps, LogoutInput } from "../contracts/logout.contract";
 
 export const createLogoutUseCase =
   ({ sessions }: LogoutDeps) =>
-  async (sessionId: string | undefined): Promise<void> => {
+  async (sessionId: LogoutInput) => {
     if (!sessionId) {
       return;
     }

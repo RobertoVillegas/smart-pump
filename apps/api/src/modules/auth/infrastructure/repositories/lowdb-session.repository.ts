@@ -1,4 +1,5 @@
 import type { createDb } from "../../../../db/lowdb";
+import { recordToSession } from "../../domain/mappers/session.mapper";
 import type {
   CreateSessionInput,
   SessionRepository,
@@ -6,39 +7,30 @@ import type {
 
 type Db = Awaited<ReturnType<typeof createDb>>;
 
-export const createLowDbSessionRepository = (db: Db): SessionRepository => {
-  const create = async (input: CreateSessionInput) => {
+export const createLowDbSessionRepository = (db: Db): SessionRepository => ({
+  create: async (input: CreateSessionInput) => {
     await db.read();
 
-    const session = {
+    const record = {
       createdAt: new Date().toISOString(),
       expiresAt: input.expiresAt,
       id: input.id,
       userId: input.userId,
     };
 
-    db.data.sessions.push(session);
+    db.data.sessions.push(record);
     await db.write();
 
-    return session;
-  };
-
-  const deleteById = async (id: string) => {
+    return recordToSession(record);
+  },
+  deleteById: async (id) => {
     await db.read();
-
     db.data.sessions = db.data.sessions.filter((session) => session.id !== id);
     await db.write();
-  };
-
-  const findById = async (id: string) => {
+  },
+  findById: async (id) => {
     await db.read();
-
-    return db.data.sessions.find((session) => session.id === id);
-  };
-
-  return {
-    create,
-    deleteById,
-    findById,
-  };
-};
+    const record = db.data.sessions.find((session) => session.id === id);
+    return record ? recordToSession(record) : undefined;
+  },
+});

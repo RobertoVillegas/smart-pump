@@ -1,4 +1,4 @@
-import type { Session } from "../entities/session";
+import type { Session } from "../entities/session.entity";
 
 export interface CreateSessionInput {
   expiresAt: string;

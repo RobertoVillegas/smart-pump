@@ -1,8 +1,8 @@
 import { AppError } from "../../../../shared/http/errors";
 
-export class UnauthenticatedError extends AppError {
+export class UnauthorizedError extends AppError {
   constructor() {
     super("Authentication required", 401);
-    this.name = "UnauthenticatedError";
+    this.name = "UnauthorizedError";
   }
 }

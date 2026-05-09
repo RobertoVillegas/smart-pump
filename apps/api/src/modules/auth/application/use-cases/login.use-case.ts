@@ -1,29 +1,19 @@
 import { createSessionExpiresAt } from "../../../../shared/auth/session-cookie";
 import { createId } from "../../../../shared/utils/ids";
-import type { User } from "../../../users/domain/entities/user";
-import type { UserRepository } from "../../../users/domain/repositories/user.repository";
-import type { Session } from "../../domain/entities/session";
 import { InactiveUserError } from "../../domain/errors/inactive-user.error";
 import { InvalidCredentialsError } from "../../domain/errors/invalid-credentials.error";
-import type { SessionRepository } from "../../domain/repositories/session.repository";
-import type { LoginRequest } from "../dtos";
-
-interface LoginDeps {
-  sessions: SessionRepository;
-  users: UserRepository;
-}
-
-export interface LoginResult {
-  session: Session;
-  user: User;
-}
+import type {
+  LoginDeps,
+  LoginInput,
+  LoginOutput,
+} from "../contracts/login.contract";
 
 export const createLoginUseCase =
   ({ sessions, users }: LoginDeps) =>
-  async (credentials: LoginRequest): Promise<LoginResult> => {
-    const user = await users.findByEmail(credentials.email);
+  async (input: LoginInput): Promise<LoginOutput> => {
+    const user = await users.findByEmail(input.email);
 
-    if (!user || user.password !== credentials.password) {
+    if (!user || user.password !== input.password) {
       throw new InvalidCredentialsError();
     }
 

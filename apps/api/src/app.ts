@@ -6,10 +6,11 @@ import { secureHeaders } from "hono/secure-headers";
 
 import type { createDb } from "./db/lowdb";
 import { createDb as createDefaultDb } from "./db/lowdb";
+import { createLowDbAuthUserRepository } from "./modules/auth/infrastructure/repositories/lowdb-auth-user.repository";
 import { createLowDbSessionRepository } from "./modules/auth/infrastructure/repositories/lowdb-session.repository";
 import { createAuthRoutes } from "./modules/auth/transport/http/routes/auth.routes";
 import { createLowDbUserRepository } from "./modules/users/infrastructure/repositories/lowdb-user.repository";
-import { createUserRoutes } from "./modules/users/transport/http/routes/user.routes";
+import { createUserRoutes } from "./modules/users/transport/http/routes/users.routes";
 import { AppError } from "./shared/http/errors";
 
 interface AppOptions {
@@ -41,6 +42,7 @@ const handleError: ErrorHandler = (error, context) => {
 export const createApp = async (options: AppOptions = {}) => {
   const db = options.db ?? (await createDefaultDb());
   const sessions = createLowDbSessionRepository(db);
+  const authUsers = createLowDbAuthUserRepository(db);
   const users = createLowDbUserRepository(db);
   const app = new Hono();
 
@@ -71,8 +73,8 @@ export const createApp = async (options: AppOptions = {}) => {
     })
   );
 
-  app.route("/auth", createAuthRoutes({ sessions, users }));
-  app.route("/users", createUserRoutes({ sessions, users }));
+  app.route("/auth", createAuthRoutes({ sessions, users: authUsers }));
+  app.route("/users", createUserRoutes({ authUsers, sessions, users }));
 
   return app;
 };
