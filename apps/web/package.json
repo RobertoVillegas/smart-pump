@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
+    "dev:port": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "ultracite check",

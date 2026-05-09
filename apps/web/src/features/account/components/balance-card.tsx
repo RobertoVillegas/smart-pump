@@ -1,7 +1,33 @@
 import { Button } from "@workspace/ui/components/button";
-import { Eye } from "lucide-react";
+import { Spinner } from "@workspace/ui/components/spinner";
+import { Eye, OctagonXIcon } from "lucide-react";
 
 import { useBalance } from "../hooks/use-balance";
+
+const renderBalance = (balance: ReturnType<typeof useBalance>) => {
+  if (balance.isError) {
+    return (
+      <div className="flex items-center gap-2 text-destructive text-sm">
+        <OctagonXIcon aria-hidden="true" className="size-4" />
+        <span>Unable to load balance.</span>
+      </div>
+    );
+  }
+
+  if (balance.data) {
+    return (
+      <p className="font-heading font-semibold text-3xl">
+        {balance.data.balance}
+      </p>
+    );
+  }
+
+  return (
+    <p className="text-muted-foreground text-sm">
+      Balance is hidden until requested.
+    </p>
+  );
+};
 
 export const BalanceCard = () => {
   const balance = useBalance();
@@ -22,20 +48,10 @@ export const BalanceCard = () => {
           size="icon"
           variant="outline"
         >
-          <Eye aria-hidden="true" />
+          {balance.isFetching ? <Spinner /> : <Eye aria-hidden="true" />}
         </Button>
       </div>
-      <div className="mt-5 min-h-12">
-        {balance.data ? (
-          <p className="font-heading font-semibold text-3xl">
-            {balance.data.balance}
-          </p>
-        ) : (
-          <p className="text-muted-foreground text-sm">
-            Balance is hidden until requested.
-          </p>
-        )}
-      </div>
+      <div className="mt-5 min-h-12">{renderBalance(balance)}</div>
     </section>
   );
 };

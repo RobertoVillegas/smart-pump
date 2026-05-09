@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import { toast } from "@workspace/ui/components/toast";
 
 import { logout } from "../lib/auth.api";
 import { sessionQueryKey } from "./use-session";
@@ -14,6 +15,7 @@ export const useLogout = () => {
       queryClient.removeQueries();
       await queryClient.invalidateQueries({ queryKey: sessionQueryKey });
       await navigate({ to: "/login" });
+      toast.success({ title: "Signed out" });
     },
   });
 };

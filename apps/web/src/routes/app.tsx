@@ -1,4 +1,15 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Button } from "@workspace/ui/components/button";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@workspace/ui/components/empty";
+import { Spinner } from "@workspace/ui/components/spinner";
+import { OctagonXIcon } from "lucide-react";
 import { useEffect } from "react";
 
 import { AppShell } from "../components/app-shell";
@@ -23,7 +34,32 @@ const AccountPage = () => {
   if (session.isLoading || me.isLoading) {
     return (
       <div className="grid min-h-svh place-items-center bg-background">
-        <p className="text-muted-foreground text-sm">Loading account...</p>
+        <Spinner
+          aria-label="Loading account"
+          className="size-6 text-muted-foreground"
+        />
+      </div>
+    );
+  }
+
+  if (me.isError) {
+    return (
+      <div className="grid min-h-svh place-items-center bg-background p-4">
+        <Empty className="max-w-md border">
+          <EmptyHeader>
+            <EmptyMedia variant="icon">
+              <OctagonXIcon className="text-destructive" />
+            </EmptyMedia>
+            <EmptyTitle>Couldn't load your account</EmptyTitle>
+            <EmptyDescription>
+              Something went wrong while fetching your details. Please try
+              again.
+            </EmptyDescription>
+          </EmptyHeader>
+          <EmptyContent>
+            <Button onClick={() => me.refetch()}>Retry</Button>
+          </EmptyContent>
+        </Empty>
       </div>
     );
   }

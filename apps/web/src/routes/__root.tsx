@@ -5,6 +5,7 @@ import {
   Scripts,
   createRootRoute,
 } from "@tanstack/react-router";
+import { Toaster } from "@workspace/ui/components/toast";
 import type { ReactNode } from "react";
 
 import { queryClient } from "../lib/query-client";
@@ -14,6 +15,7 @@ import appCss from "@workspace/ui/globals.css?url";
 const RootComponent = () => (
   <QueryClientProvider client={queryClient}>
     <Outlet />
+    <Toaster />
   </QueryClientProvider>
 );
 

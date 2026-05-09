@@ -7,12 +7,12 @@ import type {
 import { Button } from "@workspace/ui/components/button";
 import { Field, FieldError, FieldLabel } from "@workspace/ui/components/field";
 import { Input } from "@workspace/ui/components/input";
+import { Spinner } from "@workspace/ui/components/spinner";
 import type { HTMLInputTypeAttribute } from "react";
 import { useEffect } from "react";
 import type { Control } from "react-hook-form";
 import { Controller, useForm } from "react-hook-form";
 
-import { ApiError } from "../../../lib/api";
 import { useUpdateProfile } from "../hooks/use-update-profile";
 
 interface ProfileFormProps {
@@ -74,10 +74,6 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
     },
     resolver: zodResolver(updateProfileRequestSchema),
   });
-  const errorMessage =
-    updateProfile.error instanceof ApiError
-      ? updateProfile.error.message
-      : "Unable to update profile";
 
   useEffect(() => {
     form.reset({
@@ -125,18 +121,9 @@ export const ProfileForm = ({ user }: ProfileFormProps) => {
           label="Address"
           name="address"
         />
-        {updateProfile.isError ? (
-          <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-destructive text-sm sm:col-span-2">
-            {errorMessage}
-          </p>
-        ) : null}
-        {updateProfile.isSuccess ? (
-          <p className="rounded-md border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-emerald-700 text-sm sm:col-span-2">
-            Profile updated.
-          </p>
-        ) : null}
         <div className="sm:col-span-2">
           <Button disabled={updateProfile.isPending} type="submit">
+            {updateProfile.isPending ? <Spinner /> : null}
             Save changes
           </Button>
         </div>
