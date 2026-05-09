@@ -26,11 +26,23 @@ bun install
 
 ## Environment
 
-Copy the example file if you want to override defaults:
+For full-stack local development from the repo root, copy the root example file
+if you want to override defaults:
 
 ```bash
 cp .env.example .env
 ```
+
+Each app also owns its deploy/runtime env shape:
+
+```bash
+cp apps/api/.env.example apps/api/.env
+cp apps/web/.env.example apps/web/.env
+```
+
+The root `.env.example` is a convenience for running the whole stack locally.
+The per-app files are the source of truth when deploying or running an app in
+isolation.
 
 | Variable       | App | Default                 | Description                                           |
 | -------------- | --- | ----------------------- | ----------------------------------------------------- |
@@ -49,7 +61,7 @@ From a fresh checkout:
 
 ```bash
 bun install
-cp .env.example .env # optional; defaults work without this file
+cp .env.example .env # optional for full-stack local dev
 ```
 
 Start the API and web app together in watch mode:
