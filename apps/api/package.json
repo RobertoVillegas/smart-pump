@@ -6,6 +6,7 @@
   "scripts": {
     "build": "bun build src/index.ts --outdir dist --target bun",
     "dev": "bun run --hot src/index.ts",
+    "start": "bun run src/index.ts",
     "lint": "ultracite check",
     "format": "ultracite fix",
     "test": "vitest run",

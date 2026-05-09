@@ -5,7 +5,9 @@ import { JSONFilePreset } from "lowdb/node";
 import type { DbShape } from "./db.types";
 
 const currentDirectory = import.meta.dirname;
-const dataFilePath = resolve(currentDirectory, "../../../../data/users.json");
+const dataFilePath = process.env.LOWDB_PATH
+  ? resolve(process.env.LOWDB_PATH)
+  : resolve(currentDirectory, "../../../../data/users.json");
 
 const defaultData: DbShape = {
   sessions: [],
@@ -14,8 +16,5 @@ const defaultData: DbShape = {
 
 export const createDb = async () => {
   const db = await JSONFilePreset<DbShape>(dataFilePath, defaultData);
-
-  db.data.sessions ??= [];
-
   return db;
 };

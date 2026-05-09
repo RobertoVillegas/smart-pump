@@ -44,10 +44,14 @@ export const createApp = async (options: AppOptions = {}) => {
   const users = createLowDbUserRepository(db);
   const app = new Hono();
 
+  const corsOrigins = process.env.CORS_ORIGINS?.split(",")
+    .map((value) => value.trim())
+    .filter(Boolean) ?? ["http://localhost:3000"];
+
   app.use(
     cors({
       credentials: true,
-      origin: ["http://localhost:3000"],
+      origin: corsOrigins,
     })
   );
   app.use(secureHeaders());

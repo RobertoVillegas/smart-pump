@@ -4,5 +4,5 @@ const app = await createApp();
 
 export default {
   fetch: app.fetch,
-  port: 3001,
+  port: Number(process.env.PORT ?? 3001),
 };
