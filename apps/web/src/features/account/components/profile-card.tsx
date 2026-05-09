@@ -1,5 +1,6 @@
 import type { UserProfile } from "@smart-pump/contracts/users";
 
+import { formatPhoneForDisplay } from "../lib/format-phone";
 import { UserAvatar } from "./user-avatar";
 
 interface ProfileCardProps {
@@ -11,7 +12,7 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
   const rows = [
     ["Email", user.email],
     ["Company", user.company],
-    ["Phone", user.phone],
+    ["Phone", formatPhoneForDisplay(user.phone)],
     ["Address", user.address],
     ["Age", String(user.age)],
     ["Eye color", user.eyeColor],

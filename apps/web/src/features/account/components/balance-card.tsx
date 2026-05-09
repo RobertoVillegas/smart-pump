@@ -1,7 +1,7 @@
 import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { EyeIcon, EyeOffIcon, OctagonXIcon, RefreshCwIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useBalance } from "../hooks/use-balance";
 
@@ -44,15 +44,15 @@ export const BalanceCard = () => {
     readBalanceVisibilityPreference
   );
 
-  useEffect(() => {
-    window.localStorage.setItem(
-      balanceVisibilityStorageKey,
-      String(isBalanceVisible)
-    );
-  }, [isBalanceVisible]);
-
   const toggleBalanceVisibility = () => {
-    setIsBalanceVisible((currentValue) => !currentValue);
+    setIsBalanceVisible((currentValue) => {
+      const nextValue = !currentValue;
+      window.localStorage.setItem(
+        balanceVisibilityStorageKey,
+        String(nextValue)
+      );
+      return nextValue;
+    });
   };
 
   return (

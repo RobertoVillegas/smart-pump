@@ -11,7 +11,6 @@ import {
   InputGroupInput,
 } from "@workspace/ui/components/input-group";
 import { Spinner } from "@workspace/ui/components/spinner";
-import { useHydrated } from "@workspace/ui/hooks/use-hydrated";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
@@ -20,10 +19,9 @@ import { ApiError } from "../../../lib/api";
 import { useLogin } from "../hooks/use-login";
 
 export const LoginForm = () => {
-  const hydrated = useHydrated();
   const login = useLogin();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const isDisabled = !hydrated || login.isPending;
+  const isDisabled = login.isPending;
   const form = useForm<LoginRequest>({
     defaultValues: {
       email: "",
