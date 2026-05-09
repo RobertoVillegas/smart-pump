@@ -1,3 +1,4 @@
+import NumberFlow from "@number-flow/react";
 import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { EyeIcon, EyeOffIcon, OctagonXIcon, RefreshCwIcon } from "lucide-react";
@@ -15,6 +16,23 @@ const readBalanceVisibilityPreference = () => {
   return window.localStorage.getItem(balanceVisibilityStorageKey) !== "false";
 };
 
+const parseCurrencyBalance = (value?: string) =>
+  Number(value?.replaceAll(/[$,]/gu, "") ?? 0);
+
+const BalanceAmount = ({ value }: { value: number }) => (
+  <p className="font-heading font-semibold text-3xl">
+    <NumberFlow
+      format={{
+        currency: "USD",
+        minimumFractionDigits: 2,
+        style: "currency",
+      }}
+      locales="en-US"
+      value={Number.isFinite(value) ? value : 0}
+    />
+  </p>
+);
+
 const renderBalance = (
   balance: ReturnType<typeof useBalance>,
   isBalanceVisible: boolean
@@ -23,16 +41,16 @@ const renderBalance = (
     return null;
   }
 
+  if (!isBalanceVisible) {
+    return <p className="font-heading font-semibold text-3xl">••••••</p>;
+  }
+
   if (balance.isLoading) {
-    return <p className="text-muted-foreground text-sm">Loading balance...</p>;
+    return <BalanceAmount value={0} />;
   }
 
   if (balance.data) {
-    return (
-      <p className="font-heading font-semibold text-3xl">
-        {isBalanceVisible ? balance.data.balance : "••••••"}
-      </p>
-    );
+    return <BalanceAmount value={parseCurrencyBalance(balance.data.balance)} />;
   }
 
   return <p className="text-muted-foreground text-sm">No balance available.</p>;
