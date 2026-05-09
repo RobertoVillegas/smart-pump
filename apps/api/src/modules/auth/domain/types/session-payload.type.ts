@@ -1,3 +1,7 @@
-import type { SessionUser } from "@smart-pump/contracts/auth";
-
-export type SessionPayload = SessionUser;
+export interface SessionPayload {
+  email: string;
+  firstName: string;
+  id: string;
+  isActive: boolean;
+  lastName: string;
+}

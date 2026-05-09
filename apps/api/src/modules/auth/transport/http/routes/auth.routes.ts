@@ -6,12 +6,12 @@ import {
   setSessionCookie,
 } from "../../../../../shared/auth/session-cookie";
 import { validate } from "../../../../../shared/http/validation";
+import type { AuthUserRepository } from "../../../application/ports/auth-user-repository.port";
+import type { SessionRepository } from "../../../application/ports/session-repository.port";
 import { createGetSessionUseCase } from "../../../application/use-cases/get-session.use-case";
 import { createLoginUseCase } from "../../../application/use-cases/login.use-case";
 import { createLogoutUseCase } from "../../../application/use-cases/logout.use-case";
 import { authUserToSessionPayload } from "../../../domain/mappers/session.mapper";
-import type { AuthUserRepository } from "../../../domain/repositories/auth-user.repository";
-import type { SessionRepository } from "../../../domain/repositories/session.repository";
 import { loginRequestSchema, sessionUserSchema } from "../schemas/login.schema";
 
 interface AuthRouteDeps {

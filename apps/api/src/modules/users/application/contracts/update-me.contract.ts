@@ -1,6 +1,6 @@
 import type { User } from "../../domain/entities/user.entity";
-import type { UserRepository } from "../../domain/repositories/user.repository";
 import type { EditableUserFields } from "../../domain/types/editable-user-fields.type";
+import type { UserRepository } from "../ports/user-repository.port";
 
 export interface UpdateMeInput {
   userId: string;

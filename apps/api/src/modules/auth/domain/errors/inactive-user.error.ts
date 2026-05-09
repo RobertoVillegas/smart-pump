@@ -1,8 +1,6 @@
-import { AppError } from "../../../../shared/http/errors";
-
-export class InactiveUserError extends AppError {
+export class InactiveUserError extends Error {
   constructor() {
-    super("User account is inactive", 403);
+    super("User account is inactive");
     this.name = "InactiveUserError";
   }
 }

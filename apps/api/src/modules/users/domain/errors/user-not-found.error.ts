@@ -1,8 +1,6 @@
-import { AppError } from "../../../../shared/http/errors";
-
-export class UserNotFoundError extends AppError {
+export class UserNotFoundError extends Error {
   constructor() {
-    super("User not found", 404);
+    super("User not found");
     this.name = "UserNotFoundError";
   }
 }

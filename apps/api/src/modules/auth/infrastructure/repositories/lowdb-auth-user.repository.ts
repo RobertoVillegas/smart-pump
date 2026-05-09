@@ -1,6 +1,6 @@
 import type { UserRecord } from "../../../../db/db.types";
 import type { createDb } from "../../../../db/lowdb";
-import type { AuthUserRepository } from "../../domain/repositories/auth-user.repository";
+import type { AuthUserRepository } from "../../application/ports/auth-user-repository.port";
 import type { AuthUser } from "../../domain/types/auth-user.type";
 
 type Db = Awaited<ReturnType<typeof createDb>>;

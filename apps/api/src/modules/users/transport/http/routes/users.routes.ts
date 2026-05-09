@@ -3,12 +3,12 @@ import { Hono } from "hono";
 import { createAuthMiddleware } from "../../../../../shared/auth/auth.middleware";
 import type { AuthVariables } from "../../../../../shared/auth/auth.middleware";
 import { validate } from "../../../../../shared/http/validation";
-import type { AuthUserRepository } from "../../../../auth/domain/repositories/auth-user.repository";
-import type { SessionRepository } from "../../../../auth/domain/repositories/session.repository";
+import type { AuthUserRepository } from "../../../../auth/application/ports/auth-user-repository.port";
+import type { SessionRepository } from "../../../../auth/application/ports/session-repository.port";
+import type { UserRepository } from "../../../application/ports/user-repository.port";
 import { createGetBalanceUseCase } from "../../../application/use-cases/get-balance.use-case";
 import { createGetMeUseCase } from "../../../application/use-cases/get-me.use-case";
 import { createUpdateMeUseCase } from "../../../application/use-cases/update-me.use-case";
-import type { UserRepository } from "../../../domain/repositories/user.repository";
 import {
   updateProfileRequestSchema,
   userProfileSchema,

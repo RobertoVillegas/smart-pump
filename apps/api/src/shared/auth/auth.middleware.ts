@@ -1,9 +1,9 @@
 import type { MiddlewareHandler } from "hono";
 
+import type { AuthUserRepository } from "../../modules/auth/application/ports/auth-user-repository.port";
+import type { SessionRepository } from "../../modules/auth/application/ports/session-repository.port";
 import { UnauthorizedError } from "../../modules/auth/domain/errors/unauthorized.error";
 import { authUserToSessionPayload } from "../../modules/auth/domain/mappers/session.mapper";
-import type { AuthUserRepository } from "../../modules/auth/domain/repositories/auth-user.repository";
-import type { SessionRepository } from "../../modules/auth/domain/repositories/session.repository";
 import type { CurrentUser } from "./current-user";
 import { getSessionCookie } from "./session-cookie";
 

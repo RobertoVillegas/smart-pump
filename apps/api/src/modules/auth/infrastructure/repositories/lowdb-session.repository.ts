@@ -1,9 +1,9 @@
 import type { createDb } from "../../../../db/lowdb";
-import { recordToSession } from "../../domain/mappers/session.mapper";
 import type {
   CreateSessionInput,
   SessionRepository,
-} from "../../domain/repositories/session.repository";
+} from "../../application/ports/session-repository.port";
+import { recordToSession } from "../../domain/mappers/session.mapper";
 
 type Db = Awaited<ReturnType<typeof createDb>>;
 

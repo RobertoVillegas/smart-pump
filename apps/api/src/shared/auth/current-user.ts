@@ -1,3 +1,3 @@
-import type { SessionUser } from "@smart-pump/contracts/auth";
+import type { SessionPayload } from "../../modules/auth/domain/types/session-payload.type";
 
-export type CurrentUser = SessionUser;
+export type CurrentUser = SessionPayload;

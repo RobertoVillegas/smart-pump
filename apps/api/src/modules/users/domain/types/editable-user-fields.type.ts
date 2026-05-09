@@ -1,3 +1,8 @@
-import type { UpdateProfileRequest } from "@smart-pump/contracts/users";
-
-export type EditableUserFields = UpdateProfileRequest;
+export interface EditableUserFields {
+  address?: string;
+  age?: number;
+  eyeColor?: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+}

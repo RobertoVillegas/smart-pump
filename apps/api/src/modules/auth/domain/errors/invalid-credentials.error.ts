@@ -1,8 +1,6 @@
-import { AppError } from "../../../../shared/http/errors";
-
-export class InvalidCredentialsError extends AppError {
+export class InvalidCredentialsError extends Error {
   constructor() {
-    super("Invalid email or password", 401);
+    super("Invalid email or password");
     this.name = "InvalidCredentialsError";
   }
 }

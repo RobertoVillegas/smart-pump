@@ -1,6 +1,6 @@
-import type { AuthUserRepository } from "../../domain/repositories/auth-user.repository";
-import type { SessionRepository } from "../../domain/repositories/session.repository";
 import type { AuthUser } from "../../domain/types/auth-user.type";
+import type { AuthUserRepository } from "../ports/auth-user-repository.port";
+import type { SessionRepository } from "../ports/session-repository.port";
 
 export type GetSessionInput = string | undefined;
 

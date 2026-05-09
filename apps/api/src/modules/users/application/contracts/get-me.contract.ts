@@ -1,5 +1,5 @@
 import type { User } from "../../domain/entities/user.entity";
-import type { UserRepository } from "../../domain/repositories/user.repository";
+import type { UserRepository } from "../ports/user-repository.port";
 
 export type GetMeInput = string;
 

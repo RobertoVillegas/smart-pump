@@ -1,8 +1,6 @@
-import { AppError } from "../../../../shared/http/errors";
-
-export class ForbiddenProfileUpdateError extends AppError {
+export class ForbiddenProfileUpdateError extends Error {
   constructor() {
-    super("Profile field is not editable", 403);
+    super("Profile field is not editable");
     this.name = "ForbiddenProfileUpdateError";
   }
 }

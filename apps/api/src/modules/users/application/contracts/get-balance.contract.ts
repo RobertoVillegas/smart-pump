@@ -1,5 +1,5 @@
-import type { UserRepository } from "../../domain/repositories/user.repository";
 import type { UserBalance } from "../../domain/types/user-balance.type";
+import type { UserRepository } from "../ports/user-repository.port";
 
 export type GetBalanceInput = string;
 

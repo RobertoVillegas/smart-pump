@@ -1,6 +1,6 @@
 import type { createDb } from "../../../../db/lowdb";
+import type { UserRepository } from "../../application/ports/user-repository.port";
 import { recordToUser } from "../../domain/mappers/user.mapper";
-import type { UserRepository } from "../../domain/repositories/user.repository";
 import type { EditableUserFields } from "../../domain/types/editable-user-fields.type";
 
 type Db = Awaited<ReturnType<typeof createDb>>;
