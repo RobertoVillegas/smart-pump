@@ -10,12 +10,12 @@
   "scripts": {
     "lint": "ultracite check",
     "format": "ultracite fix",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.0"
   }
 }
