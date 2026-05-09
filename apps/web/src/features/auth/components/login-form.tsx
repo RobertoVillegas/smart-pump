@@ -84,7 +84,7 @@ export const LoginForm = () => {
                 aria-label={
                   isPasswordVisible ? "Hide password" : "Show password"
                 }
-                className="absolute top-1/2 right-1 size-7 -translate-y-1/2 active:translate-y-[-50%]"
+                className="absolute top-1/2 right-1 size-7 -translate-y-1/2"
                 disabled={isDisabled}
                 onClick={() => setIsPasswordVisible((value) => !value)}
                 size="icon-sm"
