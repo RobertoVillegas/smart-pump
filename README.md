@@ -64,8 +64,8 @@ bun run dev
 You can also run them separately:
 
 ```bash
-bun run --cwd apps/api dev
-bun run --cwd apps/web dev
+bun run dev:api
+bun run dev:web
 ```
 
 Then open http://localhost:3000 and sign in with the demo credentials below.
@@ -113,15 +113,15 @@ Run the API production entrypoint with production env values:
 
 ```bash
 NODE_ENV=production PORT=3001 CORS_ORIGINS=https://app.example.com \
-  LOWDB_PATH=./data/users.json bun run --cwd apps/api start
+  LOWDB_PATH=./data/users.json bun run start:api
 ```
 
 Preview the built web app locally. `VITE_API_URL` is read at build time, so set
 it before `bun run build` when targeting a non-local API:
 
 ```bash
-VITE_API_URL=https://api.example.com bun run build --filter=web
-bun run --cwd apps/web preview -- --port 3000
+VITE_API_URL=https://api.example.com bun run build:web
+bun run preview:web -- --port 3000
 ```
 
 For deploys, prefer the Docker images or the CI-published GHCR images described
@@ -146,9 +146,13 @@ them pullable without auth.
 
 ```bash
 bun run dev                       # all apps in dev mode
+bun run dev:api                   # API only
+bun run dev:web                   # web only
 bun run build                     # production build
+bun run build:api                 # API production build
+bun run build:web                 # web production build
 bun run typecheck                 # all packages
-bun run --cwd apps/api test       # API unit/integration tests (Vitest)
+bun run test:api                  # API unit/integration tests (Vitest)
 bun run test:e2e                  # Playwright E2E (desktop + mobile)
 bun run lint                      # ultracite check
 bun run format                    # ultracite fix
