@@ -5,6 +5,7 @@ import { logger } from "hono/logger";
 import { secureHeaders } from "hono/secure-headers";
 import type { ContentfulStatusCode } from "hono/utils/http-status";
 
+import { env } from "../env";
 import { AppError } from "../shared/errors/app-error";
 import { HttpError } from "../shared/http/errors";
 import type { BuildDepsOptions } from "./build-deps";
@@ -55,14 +56,10 @@ export const createApp = async (options: AppOptions = {}) => {
   const deps = await buildDeps(options);
   const app = new Hono();
 
-  const corsOrigins = process.env.CORS_ORIGINS?.split(",")
-    .map((value) => value.trim())
-    .filter(Boolean) ?? ["http://localhost:3000"];
-
   app.use(
     cors({
       credentials: true,
-      origin: corsOrigins,
+      origin: env.CORS_ORIGINS,
     })
   );
   app.use(secureHeaders());

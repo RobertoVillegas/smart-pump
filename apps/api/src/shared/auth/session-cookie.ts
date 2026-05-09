@@ -1,6 +1,8 @@
 import type { Context } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 
+import { env } from "../../env";
+
 export const sessionCookieName = "smart_pump_session";
 
 const sessionDurationMs = 1000 * 60 * 60;
@@ -17,7 +19,7 @@ export const setSessionCookie = (context: Context, sessionId: string) => {
     httpOnly: true,
     path: "/",
     sameSite: "Lax",
-    secure: process.env.NODE_ENV === "production",
+    secure: env.NODE_ENV === "production",
   });
 };
 

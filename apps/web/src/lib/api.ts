@@ -1,4 +1,4 @@
-const apiBaseUrl = import.meta.env.VITE_API_URL ?? "http://localhost:3001";
+import { env } from "../env";
 
 interface ApiErrorBody {
   error?: {
@@ -20,7 +20,7 @@ export const apiRequest = async <TResponse>(
   path: string,
   init: RequestInit = {}
 ): Promise<TResponse> => {
-  const response = await fetch(`${apiBaseUrl}${path}`, {
+  const response = await fetch(`${env.apiUrl}${path}`, {
     ...init,
     credentials: "include",
     headers: {

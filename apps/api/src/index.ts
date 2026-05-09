@@ -1,8 +1,9 @@
 import { createApp } from "./app";
+import { env } from "./env";
 
 const app = await createApp();
 
 export default {
   fetch: app.fetch,
-  port: Number(process.env.PORT ?? 3001),
+  port: env.PORT,
 };

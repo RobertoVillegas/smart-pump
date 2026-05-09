@@ -1,6 +1,5 @@
 {
   "lockfileVersion": 1,
-  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "start-monorepo",
@@ -48,6 +47,7 @@
         "react-dom": "^19.2.4",
         "react-hook-form": "^7.75.0",
         "tailwindcss": "^4.1.18",
+        "zod": "^4.4.3",
       },
       "devDependencies": {
         "@types/node": "^25.1.0",

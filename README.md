@@ -24,9 +24,35 @@ profile, and balance lookups.
 bun install
 ```
 
+## Environment
+
+Copy the example file if you want to override defaults:
+
+```bash
+cp .env.example .env
+```
+
+| Variable       | App | Default                 | Description                                           |
+| -------------- | --- | ----------------------- | ----------------------------------------------------- |
+| `PORT`         | API | `3001`                  | API server port.                                      |
+| `NODE_ENV`     | API | `development`           | Runtime mode: `development`, `production`, or `test`. |
+| `CORS_ORIGINS` | API | `http://localhost:3000` | Comma-separated allowed web origins.                  |
+| `LOWDB_PATH`   | API | `data/users.json`       | LowDB JSON file path.                                 |
+| `VITE_API_URL` | Web | `http://localhost:3001` | API origin used by the browser client.                |
+
+Both apps validate environment variables with Zod. The API validates at startup;
+the web app validates `VITE_API_URL` when the browser client loads.
+
 ## Develop
 
-Start the API and web app together:
+From a fresh checkout:
+
+```bash
+bun install
+cp .env.example .env # optional; defaults work without this file
+```
+
+Start the API and web app together in watch mode:
 
 ```bash
 bun run dev
@@ -35,7 +61,14 @@ bun run dev
 - Web → http://localhost:3000
 - API → http://localhost:3001
 
-The web app reads `VITE_API_URL` (defaults to `http://localhost:3001`).
+You can also run them separately:
+
+```bash
+bun run --cwd apps/api dev
+bun run --cwd apps/web dev
+```
+
+Then open http://localhost:3000 and sign in with the demo credentials below.
 
 ## Demo credentials
 
@@ -67,6 +100,32 @@ docker build -f apps/web/Dockerfile \
   --build-arg VITE_API_URL=https://api.example.com \
   -t smart-pump-web .
 ```
+
+## Production
+
+Build all apps:
+
+```bash
+bun run build
+```
+
+Run the API production entrypoint with production env values:
+
+```bash
+NODE_ENV=production PORT=3001 CORS_ORIGINS=https://app.example.com \
+  LOWDB_PATH=./data/users.json bun run --cwd apps/api start
+```
+
+Preview the built web app locally. `VITE_API_URL` is read at build time, so set
+it before `bun run build` when targeting a non-local API:
+
+```bash
+VITE_API_URL=https://api.example.com bun run build --filter=web
+bun run --cwd apps/web preview -- --port 3000
+```
+
+For deploys, prefer the Docker images or the CI-published GHCR images described
+below.
 
 ## CI
 
