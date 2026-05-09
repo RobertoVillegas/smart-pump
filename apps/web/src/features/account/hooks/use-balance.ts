@@ -6,7 +6,6 @@ export const balanceQueryKey = ["balance"] as const;
 
 export const useBalance = () =>
   useQuery({
-    enabled: false,
     queryFn: getBalance,
     queryKey: balanceQueryKey,
   });
