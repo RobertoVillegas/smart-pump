@@ -20,6 +20,7 @@ ENV VITE_API_URL=${VITE_API_URL}
 COPY apps/web ./apps/web
 COPY packages/contracts ./packages/contracts
 COPY packages/ui ./packages/ui
+RUN rm -rf apps/web/.output apps/web/node_modules/.cache apps/web/node_modules/.vite
 RUN bun run --cwd apps/web build
 
 FROM oven/bun:1.3-slim AS runtime
