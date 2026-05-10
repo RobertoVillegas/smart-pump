@@ -19,6 +19,13 @@ const readBalanceVisibilityPreference = () => {
 const parseCurrencyBalance = (value?: string) =>
   Number(value?.replaceAll(/[$,]/gu, "") ?? 0);
 
+const formatCurrencyBalance = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    minimumFractionDigits: 2,
+    style: "currency",
+  }).format(value);
+
 const MIN_BALANCE_FONT_SIZE = 48;
 const MAX_BALANCE_FONT_SIZE = 126;
 const MOBILE_BALANCE_VIEWPORT_RATIO = 0.16;
@@ -53,6 +60,7 @@ const BalanceAmount = ({
     measuredSize ?? MIN_BALANCE_FONT_SIZE
   );
   const hasReported = useRef(false);
+  const formattedValue = formatCurrencyBalance(value);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -93,7 +101,7 @@ const BalanceAmount = ({
   return (
     <p
       ref={containerRef}
-      aria-label={Number.isFinite(value) ? undefined : "Hidden balance"}
+      aria-label={formattedValue}
       className="max-w-full overflow-hidden font-heading font-extrabold leading-none tracking-normal"
       style={{ fontSize }}
     >
