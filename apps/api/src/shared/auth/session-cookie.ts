@@ -25,6 +25,9 @@ export const setSessionCookie = (context: Context, sessionId: string) => {
 
 export const clearSessionCookie = (context: Context) => {
   deleteCookie(context, sessionCookieName, {
+    httpOnly: true,
     path: "/",
+    sameSite: "Lax",
+    secure: env.NODE_ENV === "production",
   });
 };

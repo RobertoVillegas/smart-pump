@@ -26,6 +26,7 @@ ENV NODE_ENV=production \
     LOWDB_PATH=/app/data/users.json
 COPY --from=build /repo/apps/api/dist ./dist
 COPY data ./data
+RUN chown -R bun:bun /app/data
 EXPOSE 3001
 USER bun
 CMD ["bun", "run", "dist/index.js"]
