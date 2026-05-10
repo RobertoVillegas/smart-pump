@@ -41,18 +41,20 @@ const transactions = [
 
 export const TransactionsList = () => (
   <section className="rounded-[2.5rem] bg-card p-8 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] sm:p-10">
-    <div className="flex items-end justify-between gap-4">
+    <div className="grid gap-2">
       <div>
         <h2 className="font-heading font-extrabold text-3xl tracking-normal">
           Recent activity
         </h2>
-        <p className="mt-2 text-muted-foreground">
+      </div>
+      <div className="flex min-w-0 items-center gap-3">
+        <p className="min-w-0 flex-1 text-muted-foreground">
           Latest account events and service charges.
         </p>
+        <span className="inline-flex min-h-8 shrink-0 items-center justify-center rounded-full bg-primary/10 px-4 py-2 text-center font-semibold text-primary text-sm leading-none">
+          Demo data
+        </span>
       </div>
-      <span className="inline-flex h-8 items-center justify-center rounded-full bg-primary/10 px-3 font-semibold text-primary text-sm leading-none">
-        Demo data
-      </span>
     </div>
     <div className="mt-8 divide-y divide-border">
       {transactions.map((transaction) => {

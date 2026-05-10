@@ -2,7 +2,7 @@ import NumberFlow from "@number-flow/react";
 import { Button } from "@workspace/ui/components/button";
 import { Spinner } from "@workspace/ui/components/spinner";
 import { EyeIcon, EyeOffIcon, OctagonXIcon, RefreshCwIcon } from "lucide-react";
-import { useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 
 import { useBalance } from "../hooks/use-balance";
 
@@ -26,22 +26,82 @@ const formatCurrencyBalance = (value: number) =>
     style: "currency",
   }).format(value);
 
-const BalanceAmount = ({ value }: { value: number }) => (
-  <p
-    aria-label={formatCurrencyBalance(value)}
-    className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal"
-  >
-    <NumberFlow
-      format={{
-        currency: "USD",
-        minimumFractionDigits: 2,
-        style: "currency",
-      }}
-      locales="en-US"
-      value={Number.isFinite(value) ? value : 0}
-    />
-  </p>
-);
+const minBalanceFontSize = 48;
+const maxBalanceFontSize = 126;
+const mobileBalanceViewportRatio = 0.16;
+const desktopBalanceViewportRatio = 0.11;
+const balanceTextSafetyRatio = 0.92;
+
+const getPreferredBalanceFontSize = () => {
+  const viewportRatio =
+    window.innerWidth < 640
+      ? mobileBalanceViewportRatio
+      : desktopBalanceViewportRatio;
+
+  return Math.min(
+    maxBalanceFontSize,
+    Math.max(minBalanceFontSize, window.innerWidth * viewportRatio)
+  );
+};
+
+const BalanceAmount = ({ value }: { value: number }) => {
+  const containerRef = useRef<HTMLParagraphElement>(null);
+  const [fontSize, setFontSize] = useState(minBalanceFontSize);
+  const formattedValue = formatCurrencyBalance(value);
+
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const updateFontSize = () => {
+      const preferredSize = getPreferredBalanceFontSize();
+      const availableWidth = container.clientWidth * balanceTextSafetyRatio;
+      const measuredWidth = container.scrollWidth;
+
+      if (measuredWidth <= availableWidth) {
+        setFontSize(preferredSize);
+        return;
+      }
+
+      setFontSize(
+        Math.max(
+          minBalanceFontSize,
+          Math.floor(preferredSize * (availableWidth / measuredWidth))
+        )
+      );
+    };
+
+    updateFontSize();
+
+    const resizeObserver = new ResizeObserver(updateFontSize);
+    resizeObserver.observe(container);
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  return (
+    <p
+      ref={containerRef}
+      aria-label={formattedValue}
+      className="max-w-full overflow-hidden font-heading font-extrabold leading-none tracking-normal"
+      style={{ fontSize }}
+    >
+      <NumberFlow
+        className="block max-w-full tabular-nums"
+        format={{
+          currency: "USD",
+          minimumFractionDigits: 2,
+          style: "currency",
+        }}
+        locales="en-US"
+        value={Number.isFinite(value) ? value : 0}
+      />
+    </p>
+  );
+};
 
 const renderBalance = (
   balance: ReturnType<typeof useBalance>,
@@ -53,7 +113,7 @@ const renderBalance = (
 
   if (!isBalanceVisible) {
     return (
-      <p className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal">
+      <p className="max-w-full overflow-hidden font-heading font-extrabold text-[clamp(3.25rem,16vw,7.875rem)] leading-none tracking-normal">
         ••••••
       </p>
     );
