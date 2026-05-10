@@ -28,10 +28,10 @@ interface NavUserProps {
 const UserMark = ({ name, size = 32 }: { name: string; size?: number }) => (
   <span
     aria-hidden="true"
-    className="shrink-0 overflow-hidden rounded-full"
+    className="grid shrink-0 place-items-center overflow-hidden rounded-full [&>svg]:block"
     style={{ height: size, width: size }}
   >
-    <Avatar name={name} size={size} variant="marble" />
+    <Avatar className="size-full" name={name} size={size} variant="marble" />
   </span>
 );
 
@@ -46,7 +46,7 @@ export const NavUser = ({
       aria-label="Open account menu"
       className={cn(
         buttonVariants({ variant: "ghost" }),
-        "h-auto min-w-0 justify-start gap-2 px-2 py-1.5"
+        "h-auto min-w-0 justify-start gap-3 px-3 py-2"
       )}
       disabled={isSigningOut}
     >

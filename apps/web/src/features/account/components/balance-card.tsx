@@ -20,7 +20,7 @@ const parseCurrencyBalance = (value?: string) =>
   Number(value?.replaceAll(/[$,]/gu, "") ?? 0);
 
 const BalanceAmount = ({ value }: { value: number }) => (
-  <p className="font-heading font-semibold text-3xl">
+  <p className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal">
     <NumberFlow
       format={{
         currency: "USD",
@@ -42,7 +42,11 @@ const renderBalance = (
   }
 
   if (!isBalanceVisible) {
-    return <p className="font-heading font-semibold text-3xl">••••••</p>;
+    return (
+      <p className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal">
+        ••••••
+      </p>
+    );
   }
 
   if (balance.isLoading) {
@@ -74,11 +78,11 @@ export const BalanceCard = () => {
   };
 
   return (
-    <section className="rounded-lg border bg-card p-5">
-      <div className="flex items-center justify-between gap-4">
+    <section className="rounded-[2.5rem] bg-card p-8 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] sm:p-10">
+      <div className="flex items-start justify-between gap-4">
         <div>
-          <h2 className="font-heading font-semibold text-lg">Balance</h2>
-          <p className="text-muted-foreground text-sm">
+          <h2 className="font-heading font-extrabold text-2xl">Balance</h2>
+          <p className="mt-1 text-muted-foreground text-sm">
             Available account balance
           </p>
         </div>
@@ -112,7 +116,7 @@ export const BalanceCard = () => {
           </Button>
         </div>
       </div>
-      <div className="mt-5 min-h-12">
+      <div className="mt-10 min-h-24">
         {balance.isError ? (
           <div className="flex items-center gap-2 text-destructive text-sm">
             <OctagonXIcon aria-hidden="true" className="size-4" />

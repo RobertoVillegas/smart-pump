@@ -20,6 +20,7 @@ interface ProfileFormProps {
 const getProfileFormValues = (user: UserProfile): UpdateProfileRequest => ({
   address: user.address,
   age: user.age,
+  email: user.email,
   eyeColor: user.eyeColor,
   firstName: user.firstName,
   lastName: user.lastName,
@@ -34,10 +35,13 @@ export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
   });
 
   return (
-    <section className="rounded-lg border bg-card p-5">
-      <h2 className="font-heading font-semibold text-lg">Personal details</h2>
+    <section className="rounded-[2.5rem] bg-card p-8 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] sm:p-10">
+      <h2 className="font-heading font-extrabold text-2xl">Personal details</h2>
+      <p className="mt-2 text-muted-foreground">
+        Keep the profile information shown on your account up to date.
+      </p>
       <form
-        className="mt-5 grid gap-4 sm:grid-cols-2"
+        className="mt-6 grid gap-4 sm:grid-cols-2"
         onSubmit={form.handleSubmit((values) =>
           updateProfile.mutate(values, { onSuccess: onSaved })
         )}
@@ -53,6 +57,12 @@ export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
           name="lastName"
         />
         <ProfilePhoneField control={form.control} />
+        <ProfileField
+          control={form.control}
+          label="Email"
+          name="email"
+          type="email"
+        />
         <ProfileField
           control={form.control}
           label="Age"

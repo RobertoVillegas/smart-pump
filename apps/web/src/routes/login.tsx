@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
 import { LoginForm } from "../features/auth/components/login-form";
+import { redirectAuthenticatedSession } from "../features/auth/lib/require-authenticated-session";
 
 const LoginPage = () => (
   <main className="grid min-h-svh bg-background lg:grid-cols-[0.95fr_1.05fr]">
@@ -34,4 +35,7 @@ const LoginPage = () => (
   </main>
 );
 
-export const Route = createFileRoute("/login")({ component: LoginPage });
+export const Route = createFileRoute("/login")({
+  beforeLoad: redirectAuthenticatedSession,
+  component: LoginPage,
+});

@@ -6,10 +6,13 @@ import { validate } from "../../../../../shared/http/validation";
 import type { AuthUserRepository } from "../../../../auth/application/ports/auth-user-repository.port";
 import type { SessionRepository } from "../../../../auth/application/ports/session-repository.port";
 import type { UserRepository } from "../../../application/ports/user-repository.port";
+import { createChangePasswordUseCase } from "../../../application/use-cases/change-password.use-case";
 import { createGetBalanceUseCase } from "../../../application/use-cases/get-balance.use-case";
 import { createGetMeUseCase } from "../../../application/use-cases/get-me.use-case";
 import { createUpdateMeUseCase } from "../../../application/use-cases/update-me.use-case";
 import {
+  changePasswordRequestSchema,
+  changePasswordResponseSchema,
   updateProfileRequestSchema,
   userProfileSchema,
 } from "../schemas/update-profile.schema";
@@ -33,6 +36,7 @@ export const createUserRoutes = ({
   const getMe = createGetMeUseCase({ users });
   const getBalance = createGetBalanceUseCase({ users });
   const updateMe = createUpdateMeUseCase({ users });
+  const changePassword = createChangePasswordUseCase({ users });
 
   app.use("*", requireAuth);
 
@@ -59,6 +63,18 @@ export const createUserRoutes = ({
       const user = await updateMe({ profile, userId: currentUser.id });
 
       return context.json({ user: userProfileSchema.parse(user) });
+    }
+  );
+
+  app.patch(
+    "/me/password",
+    validate("json", changePasswordRequestSchema),
+    async (context) => {
+      const currentUser = context.get("user");
+      const password = context.req.valid("json");
+      const result = await changePassword({ password, userId: currentUser.id });
+
+      return context.json(changePasswordResponseSchema.parse(result));
     }
   );
 

@@ -14,3 +14,14 @@ export const requireAuthenticatedSession = async () => {
     throw redirect({ to: "/login" });
   }
 };
+
+export const redirectAuthenticatedSession = async () => {
+  const session = await queryClient.ensureQueryData({
+    queryFn: getSession,
+    queryKey: sessionQueryKey,
+  });
+
+  if (session.authenticated) {
+    throw redirect({ to: "/app" });
+  }
+};

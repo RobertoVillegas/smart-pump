@@ -12,6 +12,7 @@ import { Spinner } from "@workspace/ui/components/spinner";
 import { ArrowLeftIcon, OctagonXIcon } from "lucide-react";
 
 import { AppShell } from "../components/app-shell";
+import { PasswordForm } from "../features/account/components/password-form";
 import { ProfileForm } from "../features/account/components/profile-form";
 import { useMe } from "../features/account/hooks/use-me";
 import { useSession } from "../features/auth/hooks/use-session";
@@ -64,25 +65,26 @@ const EditAccountPage = () => {
     <AppShell
       user={{ email: user.email, name: `${user.firstName} ${user.lastName}` }}
     >
-      <div className="mb-6">
+      <div className="mb-10">
         <Link className={buttonVariants({ variant: "ghost" })} to="/app">
           <ArrowLeftIcon aria-hidden="true" />
           Account
         </Link>
-        <h1 className="mt-4 font-heading font-semibold text-3xl">
+        <h1 className="mt-6 font-heading font-extrabold text-[clamp(3rem,8vw,5.5rem)] leading-[0.95] tracking-normal">
           Edit details
         </h1>
-        <p className="mt-2 text-muted-foreground">
+        <p className="mt-5 max-w-2xl text-lg text-muted-foreground">
           Update the profile details shown on your account.
         </p>
       </div>
-      <div className="max-w-3xl">
+      <div className="grid max-w-3xl gap-8">
         <ProfileForm
           user={user}
           onSaved={() => {
             navigate({ to: "/app" });
           }}
         />
+        <PasswordForm />
       </div>
     </AppShell>
   );

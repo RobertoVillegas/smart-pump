@@ -16,15 +16,15 @@ export const AppShell = ({ children, user }: AppShellProps) => {
 
   return (
     <div className="min-h-svh bg-background">
-      <header className="border-b bg-card">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
+      <header className="bg-background/90">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-5 sm:px-6">
           <Link className="flex items-center gap-3" to="/app">
             <img
               alt="SMART Pump"
-              className="size-9 rounded-md border bg-white object-contain p-1"
+              className="size-10 rounded-2xl bg-white object-contain p-1.5 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px]"
               src="/assets/smart-pump-logo.png"
             />
-            <span className="font-heading font-semibold text-lg">
+            <span className="font-heading font-extrabold text-lg">
               SMART Pump
             </span>
           </Link>
@@ -38,7 +38,7 @@ export const AppShell = ({ children, user }: AppShellProps) => {
           ) : null}
         </div>
       </header>
-      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">{children}</main>
     </div>
   );
 };

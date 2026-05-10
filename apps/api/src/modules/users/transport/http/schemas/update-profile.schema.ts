@@ -1,4 +1,6 @@
 export {
+  changePasswordRequestSchema,
+  changePasswordResponseSchema,
   updateProfileRequestSchema,
   updateProfileResponseSchema,
   userProfileSchema,

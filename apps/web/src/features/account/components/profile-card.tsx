@@ -23,12 +23,12 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
   ] as const;
 
   return (
-    <section className="rounded-lg border bg-card p-5">
+    <section className="rounded-[2.5rem] bg-card p-8 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] sm:p-10">
       <div className="flex items-start justify-between gap-4">
         <div className="flex min-w-0 items-start gap-4">
           <UserAvatar name={fullName} />
           <div className="min-w-0">
-            <h2 className="font-heading font-semibold text-xl">{fullName}</h2>
+            <h2 className="font-heading font-extrabold text-2xl">{fullName}</h2>
             <p className="text-muted-foreground text-sm">
               {user.isActive ? "Active account" : "Inactive account"}
             </p>
@@ -42,7 +42,7 @@ export const ProfileCard = ({ user }: ProfileCardProps) => {
           <PencilIcon aria-hidden="true" />
         </Link>
       </div>
-      <dl className="mt-5 grid gap-3 text-sm">
+      <dl className="mt-8 grid gap-4 text-sm">
         {rows.map(([label, value]) => (
           <div className="grid gap-1" key={label}>
             <dt className="text-muted-foreground">{label}</dt>

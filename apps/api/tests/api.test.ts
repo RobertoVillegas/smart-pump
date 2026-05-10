@@ -8,6 +8,7 @@ import {
 } from "@smart-pump/contracts/auth";
 import {
   balanceResponseSchema,
+  changePasswordResponseSchema,
   userProfileResponseSchema,
 } from "@smart-pump/contracts/users";
 import { JSONFilePreset } from "lowdb/node";
@@ -50,12 +51,19 @@ const inactiveUser = {
   password: "_4rhododfj",
 };
 
+const otherActiveUser = {
+  ...activeUser,
+  _id: "other-active-user-id",
+  email: "other.user@smartpump.test",
+  guid: "other-active-user-guid",
+};
+
 const createTestApp = async () => {
   const directory = await mkdtemp(join(tmpdir(), "smart-pump-api-"));
   const path = join(directory, `${crypto.randomUUID()}.json`);
   const seedData: DbShape = {
     sessions: [],
-    users: [activeUser, inactiveUser],
+    users: structuredClone([activeUser, inactiveUser, otherActiveUser]),
   };
 
   await writeFile(path, JSON.stringify(seedData), "utf-8");
@@ -170,6 +178,7 @@ describe("API", () => {
 
     const validResponse = await context.app.request("/users/me", {
       body: JSON.stringify({
+        email: "updated.user@smartpump.test",
         firstName: "Updated",
         phone: "+1 (213) 373-4253",
       }),
@@ -182,9 +191,95 @@ describe("API", () => {
     const body = userProfileResponseSchema.parse(await validResponse.json());
 
     expect(validResponse.status).toBe(200);
+    expect(body.user.email).toBe("updated.user@smartpump.test");
     expect(body.user.firstName).toBe("Updated");
     expect(body.user.phone).toBe("+1 (213) 373-4253");
     expect("balance" in body.user).toBeFalsy();
+  });
+
+  it("rejects duplicate profile email updates", async () => {
+    const loginResponse = await login(context);
+    const cookie = loginResponse.headers.get("set-cookie") ?? "";
+    const response = await context.app.request("/users/me", {
+      body: JSON.stringify({
+        email: otherActiveUser.email,
+      }),
+      headers: {
+        "content-type": "application/json",
+        cookie,
+      },
+      method: "PATCH",
+    });
+    const body = errorResponseSchema.parse(await response.json());
+
+    expect(response.status).toBe(409);
+    expect(body.error.message).toBe("Email is already in use");
+  });
+
+  it("changes the authenticated user password", async () => {
+    const loginResponse = await login(context);
+    const cookie = loginResponse.headers.get("set-cookie") ?? "";
+    const response = await context.app.request("/users/me/password", {
+      body: JSON.stringify({
+        confirmPassword: "new-password",
+        currentPassword: activeUser.password,
+        newPassword: "new-password",
+      }),
+      headers: {
+        "content-type": "application/json",
+        cookie,
+      },
+      method: "PATCH",
+    });
+    const body = changePasswordResponseSchema.parse(await response.json());
+
+    expect(response.status).toBe(200);
+    expect(body).toStrictEqual({ success: true });
+
+    const oldPasswordResponse = await context.app.request("/auth/login", {
+      body: JSON.stringify({
+        email: activeUser.email,
+        password: activeUser.password,
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+      method: "POST",
+    });
+    const newPasswordResponse = await context.app.request("/auth/login", {
+      body: JSON.stringify({
+        email: activeUser.email,
+        password: "new-password",
+      }),
+      headers: {
+        "content-type": "application/json",
+      },
+      method: "POST",
+    });
+
+    expect(oldPasswordResponse.status).toBe(401);
+    expect(newPasswordResponse.status).toBe(200);
+  });
+
+  it("rejects password changes with an invalid current password", async () => {
+    const loginResponse = await login(context);
+    const cookie = loginResponse.headers.get("set-cookie") ?? "";
+    const response = await context.app.request("/users/me/password", {
+      body: JSON.stringify({
+        confirmPassword: "new-password",
+        currentPassword: "wrong-password",
+        newPassword: "new-password",
+      }),
+      headers: {
+        "content-type": "application/json",
+        cookie,
+      },
+      method: "PATCH",
+    });
+    const body = errorResponseSchema.parse(await response.json());
+
+    expect(response.status).toBe(403);
+    expect(body.error.message).toBe("Current password is incorrect");
   });
 
   it("reports the current session and clears stale sessions", async () => {

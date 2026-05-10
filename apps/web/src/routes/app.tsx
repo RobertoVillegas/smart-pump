@@ -14,6 +14,7 @@ import { OctagonXIcon } from "lucide-react";
 import { AppShell } from "../components/app-shell";
 import { BalanceCard } from "../features/account/components/balance-card";
 import { ProfileCard } from "../features/account/components/profile-card";
+import { TransactionsList } from "../features/account/components/transactions-list";
 import { useMe } from "../features/account/hooks/use-me";
 import { useSession } from "../features/auth/hooks/use-session";
 import { requireAuthenticatedSession } from "../features/auth/lib/require-authenticated-session";
@@ -64,15 +65,20 @@ const AccountPage = () => {
     <AppShell
       user={{ email: user.email, name: `${user.firstName} ${user.lastName}` }}
     >
-      <div className="mb-6">
-        <h1 className="font-heading font-semibold text-3xl">Account</h1>
-        <p className="mt-2 text-muted-foreground">
+      <div className="mb-8 text-center">
+        <h1 className="mx-auto max-w-3xl text-balance font-heading font-extrabold text-[clamp(2.5rem,5vw,4rem)] leading-[1.02] tracking-normal">
+          Your SMART account, at a glance.
+        </h1>
+        <p className="mx-auto mt-5 max-w-2xl text-lg text-muted-foreground">
           View your profile, check your balance, and keep details current.
         </p>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
-        <ProfileCard user={user} />
+      <div className="grid gap-8">
         <BalanceCard />
+        <div className="grid gap-8 lg:grid-cols-[0.82fr_1.18fr]">
+          <ProfileCard user={user} />
+          <TransactionsList />
+        </div>
       </div>
     </AppShell>
   );

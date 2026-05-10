@@ -1,6 +1,8 @@
 import { Link, createFileRoute } from "@tanstack/react-router";
 import { buttonVariants } from "@workspace/ui/components/button";
 
+import { redirectAuthenticatedSession } from "../features/auth/lib/require-authenticated-session";
+
 const App = () => (
   <div className="min-h-svh bg-background">
     <main className="mx-auto grid min-h-svh max-w-6xl items-center gap-8 px-4 py-10 sm:px-6 lg:grid-cols-[1fr_0.8fr]">
@@ -21,9 +23,6 @@ const App = () => (
           <Link className={buttonVariants({})} to="/login">
             Sign in
           </Link>
-          <Link className={buttonVariants({ variant: "outline" })} to="/app">
-            Open account
-          </Link>
         </div>
       </div>
       <div className="rounded-lg border bg-card p-5">
@@ -42,4 +41,7 @@ const App = () => (
   </div>
 );
 
-export const Route = createFileRoute("/")({ component: App });
+export const Route = createFileRoute("/")({
+  beforeLoad: redirectAuthenticatedSession,
+  component: App,
+});
