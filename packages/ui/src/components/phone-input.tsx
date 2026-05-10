@@ -49,10 +49,20 @@ const InputComponent = React.forwardRef<
 ));
 InputComponent.displayName = "InputComponent";
 
+const countryCodePointOffset = 127_397;
+
+const getRegionalIndicatorSymbol = (letter: string) => {
+  const codePoint = letter.codePointAt(0);
+
+  if (codePoint === undefined) {
+    return "";
+  }
+
+  return String.fromCodePoint(codePoint + countryCodePointOffset);
+};
+
 const FlagComponent = ({ country, countryName }: RPNInput.FlagProps) => {
-  const flag = country.replaceAll(/./gu, (letter) =>
-    String.fromCodePoint(letter.codePointAt(0) + 127_397)
-  );
+  const flag = country.replaceAll(/./gu, getRegionalIndicatorSymbol);
 
   return (
     <span
