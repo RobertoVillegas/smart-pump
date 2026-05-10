@@ -101,6 +101,7 @@ const CountrySelectOption = ({
     <CommandItem
       ref={setCountryItemRef}
       className="gap-2"
+      keywords={[countryName]}
       onSelect={handleSelect}
       value={country}
     >
