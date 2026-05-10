@@ -58,6 +58,46 @@ test.describe("account", () => {
     ).toBeVisible();
   });
 
+  test("user can update password and sign in with the new password", async ({
+    page,
+  }) => {
+    const nextPassword = `new-password-${Date.now()}`;
+
+    await page.getByRole("link", { name: /edit details/iu }).click();
+    await page.waitForURL("**/app/edit");
+    await page.getByLabel("Current password").fill(activeUser.password);
+    await page
+      .getByRole("textbox", { exact: true, name: "New password" })
+      .fill(nextPassword);
+    await page.getByLabel("Confirm new password").fill(nextPassword);
+    await page.getByRole("button", { name: /update password/iu }).click();
+    await expect(page.getByText(/password updated/iu)).toBeVisible();
+
+    await page.getByRole("button", { name: "Open account menu" }).click();
+    await page.getByRole("menuitem", { name: /sign out/iu }).click();
+    await page.waitForURL("**/login");
+
+    await page.getByLabel("Email").fill(activeUser.email);
+    await page
+      .getByRole("textbox", { exact: true, name: "Password" })
+      .fill(nextPassword);
+    await page.getByRole("button", { name: /sign in/iu }).click();
+    await page.waitForURL("**/app");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "Account" })
+    ).toBeVisible();
+
+    await page.getByRole("link", { name: /edit details/iu }).click();
+    await page.waitForURL("**/app/edit");
+    await page.getByLabel("Current password").fill(nextPassword);
+    await page
+      .getByRole("textbox", { exact: true, name: "New password" })
+      .fill(activeUser.password);
+    await page.getByLabel("Confirm new password").fill(activeUser.password);
+    await page.getByRole("button", { name: /update password/iu }).click();
+    await expect(page.getByText(/password updated/iu)).toBeVisible();
+  });
+
   test("protected user 401 sends the session back to login", async ({
     page,
   }) => {

@@ -156,6 +156,12 @@ them pullable without auth.
 
 ## Common commands
 
+Install the Playwright browser once before running E2E tests locally:
+
+```bash
+bunx playwright install chromium
+```
+
 ```bash
 bun run dev                       # all apps in dev mode
 bun run dev:api                   # API only
