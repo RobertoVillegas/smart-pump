@@ -19,13 +19,6 @@ const readBalanceVisibilityPreference = () => {
 const parseCurrencyBalance = (value?: string) =>
   Number(value?.replaceAll(/[$,]/gu, "") ?? 0);
 
-const formatCurrencyBalance = (value: number) =>
-  new Intl.NumberFormat("en-US", {
-    currency: "USD",
-    minimumFractionDigits: 2,
-    style: "currency",
-  }).format(value);
-
 const MIN_BALANCE_FONT_SIZE = 48;
 const MAX_BALANCE_FONT_SIZE = 126;
 const MOBILE_BALANCE_VIEWPORT_RATIO = 0.16;
@@ -60,7 +53,6 @@ const BalanceAmount = ({
     measuredSize ?? MIN_BALANCE_FONT_SIZE
   );
   const hasReported = useRef(false);
-  const formattedValue = formatCurrencyBalance(value);
 
   useLayoutEffect(() => {
     const container = containerRef.current;
@@ -101,7 +93,7 @@ const BalanceAmount = ({
   return (
     <p
       ref={containerRef}
-      aria-label={formattedValue}
+      aria-label={Number.isFinite(value) ? undefined : "Hidden balance"}
       className="max-w-full overflow-hidden font-heading font-extrabold leading-none tracking-normal"
       style={{ fontSize }}
     >
@@ -137,6 +129,10 @@ export const BalanceCard = () => {
   const handleMeasured = (size: number) => {
     measuredSizeRef.current = size;
   };
+
+  const numericValue = balance.data
+    ? parseCurrencyBalance(balance.data.balance)
+    : 0;
 
   return (
     <section className="rounded-[2.5rem] bg-card p-8 shadow-[rgba(0,0,0,0.04)_0px_1px_1px_0px,rgba(0,0,0,0.04)_0px_2px_4px_0px] sm:p-10">
@@ -184,33 +180,28 @@ export const BalanceCard = () => {
             <span>Unable to load balance.</span>
           </div>
         )}
-        {!balance.isError && !isBalanceVisible && (
-          <p className="max-w-full overflow-hidden font-heading font-extrabold text-[clamp(3.25rem,16vw,7.875rem)] leading-none tracking-normal">
-            ••••••
-          </p>
+        {!balance.isError && (
+          <div className="relative">
+            {/* Always mounted — CSS toggles visibility */}
+            <div
+              className={`transition-opacity duration-200 ${
+                isBalanceVisible ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <BalanceAmount
+                measuredSize={measuredSizeRef.current}
+                onMeasured={handleMeasured}
+                value={numericValue}
+              />
+            </div>
+            {/* Overlay for hidden state */}
+            {!isBalanceVisible && (
+              <p className="absolute inset-0 max-w-full overflow-hidden font-heading font-extrabold text-[clamp(3.25rem,16vw,7.875rem)] leading-none tracking-normal">
+                ••••••
+              </p>
+            )}
+          </div>
         )}
-        {!balance.isError && isBalanceVisible && balance.isLoading && (
-          <BalanceAmount
-            measuredSize={measuredSizeRef.current}
-            onMeasured={handleMeasured}
-            value={0}
-          />
-        )}
-        {!balance.isError && isBalanceVisible && balance.data && (
-          <BalanceAmount
-            measuredSize={measuredSizeRef.current}
-            onMeasured={handleMeasured}
-            value={parseCurrencyBalance(balance.data.balance)}
-          />
-        )}
-        {!balance.isError &&
-          isBalanceVisible &&
-          !balance.isLoading &&
-          !balance.data && (
-            <p className="text-muted-foreground text-sm">
-              No balance available.
-            </p>
-          )}
       </div>
     </section>
   );
