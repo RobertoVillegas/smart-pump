@@ -26,27 +26,40 @@ const formatCurrencyBalance = (value: number) =>
     style: "currency",
   }).format(value);
 
-const minBalanceFontSize = 48;
-const maxBalanceFontSize = 126;
-const mobileBalanceViewportRatio = 0.16;
-const desktopBalanceViewportRatio = 0.11;
-const balanceTextSafetyRatio = 0.92;
+const MIN_BALANCE_FONT_SIZE = 48;
+const MAX_BALANCE_FONT_SIZE = 126;
+const MOBILE_BALANCE_VIEWPORT_RATIO = 0.16;
+const DESKTOP_BALANCE_VIEWPORT_RATIO = 0.11;
+const BALANCE_TEXT_SAFETY_RATIO = 0.92;
 
 const getPreferredBalanceFontSize = () => {
   const viewportRatio =
     window.innerWidth < 640
-      ? mobileBalanceViewportRatio
-      : desktopBalanceViewportRatio;
+      ? MOBILE_BALANCE_VIEWPORT_RATIO
+      : DESKTOP_BALANCE_VIEWPORT_RATIO;
 
   return Math.min(
-    maxBalanceFontSize,
-    Math.max(minBalanceFontSize, window.innerWidth * viewportRatio)
+    MAX_BALANCE_FONT_SIZE,
+    Math.max(MIN_BALANCE_FONT_SIZE, window.innerWidth * viewportRatio)
   );
 };
 
-const BalanceAmount = ({ value }: { value: number }) => {
+interface BalanceAmountProps {
+  value: number;
+  measuredSize: number | null;
+  onMeasured: (size: number) => void;
+}
+
+const BalanceAmount = ({
+  value,
+  measuredSize,
+  onMeasured,
+}: BalanceAmountProps) => {
   const containerRef = useRef<HTMLParagraphElement>(null);
-  const [fontSize, setFontSize] = useState(minBalanceFontSize);
+  const [fontSize, setFontSize] = useState(
+    measuredSize ?? MIN_BALANCE_FONT_SIZE
+  );
+  const hasReported = useRef(false);
   const formattedValue = formatCurrencyBalance(value);
 
   useLayoutEffect(() => {
@@ -56,31 +69,34 @@ const BalanceAmount = ({ value }: { value: number }) => {
       return;
     }
 
-    const updateFontSize = () => {
+    const measure = () => {
       const preferredSize = getPreferredBalanceFontSize();
-      const availableWidth = container.clientWidth * balanceTextSafetyRatio;
+      const availableWidth = container.clientWidth * BALANCE_TEXT_SAFETY_RATIO;
       const measuredWidth = container.scrollWidth;
 
-      if (measuredWidth <= availableWidth) {
-        setFontSize(preferredSize);
-        return;
-      }
+      const newSize =
+        measuredWidth <= availableWidth
+          ? preferredSize
+          : Math.max(
+              MIN_BALANCE_FONT_SIZE,
+              Math.floor(preferredSize * (availableWidth / measuredWidth))
+            );
 
-      setFontSize(
-        Math.max(
-          minBalanceFontSize,
-          Math.floor(preferredSize * (availableWidth / measuredWidth))
-        )
-      );
+      setFontSize(newSize);
+
+      if (!hasReported.current) {
+        hasReported.current = true;
+        onMeasured(newSize);
+      }
     };
 
-    updateFontSize();
+    measure();
 
-    const resizeObserver = new ResizeObserver(updateFontSize);
-    resizeObserver.observe(container);
+    const observer = new ResizeObserver(measure);
+    observer.observe(container);
 
-    return () => resizeObserver.disconnect();
-  }, []);
+    return () => observer.disconnect();
+  }, [onMeasured]);
 
   return (
     <p
@@ -103,48 +119,23 @@ const BalanceAmount = ({ value }: { value: number }) => {
   );
 };
 
-const renderBalance = (
-  balance: ReturnType<typeof useBalance>,
-  isBalanceVisible: boolean
-) => {
-  if (balance.isError) {
-    return null;
-  }
-
-  if (!isBalanceVisible) {
-    return (
-      <p className="max-w-full overflow-hidden font-heading font-extrabold text-[clamp(3.25rem,16vw,7.875rem)] leading-none tracking-normal">
-        ••••••
-      </p>
-    );
-  }
-
-  if (balance.isLoading) {
-    return <BalanceAmount value={0} />;
-  }
-
-  if (balance.data) {
-    return <BalanceAmount value={parseCurrencyBalance(balance.data.balance)} />;
-  }
-
-  return <p className="text-muted-foreground text-sm">No balance available.</p>;
-};
-
 export const BalanceCard = () => {
   const balance = useBalance();
   const [isBalanceVisible, setIsBalanceVisible] = useState(
     readBalanceVisibilityPreference
   );
+  const measuredSizeRef = useRef<number | null>(null);
 
-  const toggleBalanceVisibility = () => {
-    setIsBalanceVisible((currentValue) => {
-      const nextValue = !currentValue;
-      window.localStorage.setItem(
-        balanceVisibilityStorageKey,
-        String(nextValue)
-      );
-      return nextValue;
+  const handleToggle = () => {
+    setIsBalanceVisible((current) => {
+      const next = !current;
+      window.localStorage.setItem(balanceVisibilityStorageKey, String(next));
+      return next;
     });
+  };
+
+  const handleMeasured = (size: number) => {
+    measuredSizeRef.current = size;
   };
 
   return (
@@ -157,7 +148,7 @@ export const BalanceCard = () => {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {balance.isError ? (
+          {balance.isError && (
             <Button
               aria-label="Retry balance"
               disabled={balance.isFetching}
@@ -171,10 +162,10 @@ export const BalanceCard = () => {
                 <RefreshCwIcon aria-hidden="true" />
               )}
             </Button>
-          ) : null}
+          )}
           <Button
             aria-label={isBalanceVisible ? "Hide balance" : "Show balance"}
-            onClick={toggleBalanceVisibility}
+            onClick={handleToggle}
             size="icon"
             variant="outline"
           >
@@ -187,14 +178,39 @@ export const BalanceCard = () => {
         </div>
       </div>
       <div className="mt-10 min-h-24">
-        {balance.isError ? (
+        {balance.isError && (
           <div className="flex items-center gap-2 text-destructive text-sm">
             <OctagonXIcon aria-hidden="true" className="size-4" />
             <span>Unable to load balance.</span>
           </div>
-        ) : (
-          renderBalance(balance, isBalanceVisible)
         )}
+        {!balance.isError && !isBalanceVisible && (
+          <p className="max-w-full overflow-hidden font-heading font-extrabold text-[clamp(3.25rem,16vw,7.875rem)] leading-none tracking-normal">
+            ••••••
+          </p>
+        )}
+        {!balance.isError && isBalanceVisible && balance.isLoading && (
+          <BalanceAmount
+            measuredSize={measuredSizeRef.current}
+            onMeasured={handleMeasured}
+            value={0}
+          />
+        )}
+        {!balance.isError && isBalanceVisible && balance.data && (
+          <BalanceAmount
+            measuredSize={measuredSizeRef.current}
+            onMeasured={handleMeasured}
+            value={parseCurrencyBalance(balance.data.balance)}
+          />
+        )}
+        {!balance.isError &&
+          isBalanceVisible &&
+          !balance.isLoading &&
+          !balance.data && (
+            <p className="text-muted-foreground text-sm">
+              No balance available.
+            </p>
+          )}
       </div>
     </section>
   );
