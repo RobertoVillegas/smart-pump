@@ -19,8 +19,18 @@ const readBalanceVisibilityPreference = () => {
 const parseCurrencyBalance = (value?: string) =>
   Number(value?.replaceAll(/[$,]/gu, "") ?? 0);
 
+const formatCurrencyBalance = (value: number) =>
+  new Intl.NumberFormat("en-US", {
+    currency: "USD",
+    minimumFractionDigits: 2,
+    style: "currency",
+  }).format(value);
+
 const BalanceAmount = ({ value }: { value: number }) => (
-  <p className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal">
+  <p
+    aria-label={formatCurrencyBalance(value)}
+    className="font-heading font-extrabold text-[clamp(3.75rem,11vw,7.875rem)] leading-none tracking-normal"
+  >
     <NumberFlow
       format={{
         currency: "USD",

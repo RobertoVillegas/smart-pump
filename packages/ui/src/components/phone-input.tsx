@@ -121,21 +121,19 @@ const CountrySelect = ({
         }
       }}
     >
-      <PopoverTrigger>
-        <button
-          type="button"
-          aria-label="Select country"
-          className="inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-s-md border border-input border-r-0 bg-background px-3 text-sm shadow-xs transition-[color,box-shadow] outline-none focus:z-10 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 dark:border-input dark:bg-input/30"
-          disabled={disabled}
-        >
-          <FlagComponent
-            country={selectedCountry}
-            countryName={selectedCountry}
-          />
-          <ChevronsUpDownIcon
-            className={cn("-mr-2 size-4 opacity-50", disabled && "hidden")}
-          />
-        </button>
+      <PopoverTrigger
+        type="button"
+        aria-label="Select country"
+        className="inline-flex h-9 shrink-0 items-center justify-center gap-1 rounded-s-md border border-input border-r-0 bg-background px-3 text-sm shadow-xs transition-[color,box-shadow] outline-none focus:z-10 focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 dark:border-input dark:bg-input/30"
+        disabled={disabled}
+      >
+        <FlagComponent
+          country={selectedCountry}
+          countryName={selectedCountry}
+        />
+        <ChevronsUpDownIcon
+          className={cn("-mr-2 size-4 opacity-50", disabled && "hidden")}
+        />
       </PopoverTrigger>
       <PopoverContent className="w-[300px] gap-0 p-0">
         <Command>

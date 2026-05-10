@@ -33,6 +33,7 @@ export const LoginForm = () => {
   return (
     <form
       className="grid gap-4"
+      noValidate
       onSubmit={form.handleSubmit((values) => {
         form.clearErrors();
         login.mutate(values, {

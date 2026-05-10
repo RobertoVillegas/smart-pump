@@ -29,6 +29,7 @@ export const PasswordForm = () => {
       </p>
       <form
         className="mt-6 grid gap-4 sm:grid-cols-2"
+        noValidate
         onSubmit={form.handleSubmit((values) =>
           changePassword.mutate(values, {
             onError: (error) => {

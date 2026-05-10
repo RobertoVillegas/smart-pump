@@ -10,7 +10,7 @@ const webPort = 3100;
 const apiUrl = `http://localhost:${apiPort}`;
 const webUrl = `http://localhost:${webPort}`;
 
-const seedSource = resolve(rootDir, "data/users.json");
+const seedSource = resolve(rootDir, "e2e/fixtures/users.json");
 const testDataDir = resolve(rootDir, ".playwright/data");
 const testDbPath = resolve(testDataDir, "users.test.json");
 

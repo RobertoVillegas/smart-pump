@@ -1,11 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { waitForHydration } from "./helpers";
-
-const ACTIVE = {
-  email: "henderson.briggs@geeknet.net",
-  password: "23derd*334",
-};
+import { activeUser, signIn, waitForHydration } from "./helpers";
 
 const INACTIVE = {
   email: "boyd.small@endipine.biz",
@@ -18,8 +13,10 @@ test.describe("authentication", () => {
   }) => {
     await page.goto("/login");
     await waitForHydration(page);
-    await page.getByLabel("Email").fill(ACTIVE.email);
-    await page.getByLabel("Password").fill(ACTIVE.password);
+    await page.getByLabel("Email").fill(activeUser.email);
+    await page
+      .getByRole("textbox", { exact: true, name: "Password" })
+      .fill(activeUser.password);
     await page.getByRole("button", { name: /sign in/iu }).click();
 
     await page.waitForURL("**/app");
@@ -32,10 +29,30 @@ test.describe("authentication", () => {
     await page.goto("/login");
     await waitForHydration(page);
     await page.getByLabel("Email").fill(INACTIVE.email);
-    await page.getByLabel("Password").fill(INACTIVE.password);
+    await page
+      .getByRole("textbox", { exact: true, name: "Password" })
+      .fill(INACTIVE.password);
     await page.getByRole("button", { name: /sign in/iu }).click();
 
-    await expect(page.getByText(/sign in failed/iu)).toBeVisible();
+    await expect(
+      page
+        .getByRole("alert")
+        .filter({ hasText: "User account is inactive" })
+        .first()
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/login/u);
+  });
+
+  test("login form validates email before submitting", async ({ page }) => {
+    await page.goto("/login");
+    await waitForHydration(page);
+    await page.getByLabel("Email").fill("not-an-email");
+    await page
+      .getByRole("textbox", { exact: true, name: "Password" })
+      .fill("anything");
+    await page.getByRole("button", { name: /sign in/iu }).click();
+
+    await expect(page.getByText("Enter a valid email address.")).toBeVisible();
     await expect(page).toHaveURL(/\/login/u);
   });
 
@@ -49,15 +66,23 @@ test.describe("authentication", () => {
     ).toBeVisible();
   });
 
-  test("user can log out", async ({ page }) => {
-    await page.goto("/login");
-    await waitForHydration(page);
-    await page.getByLabel("Email").fill(ACTIVE.email);
-    await page.getByLabel("Password").fill(ACTIVE.password);
-    await page.getByRole("button", { name: /sign in/iu }).click();
+  test("authenticated user is redirected away from public auth pages", async ({
+    page,
+  }) => {
+    await signIn(page);
+
+    await page.goto("/");
     await page.waitForURL("**/app");
 
-    await page.getByRole("button", { name: /sign out|log out/iu }).click();
+    await page.goto("/login");
+    await page.waitForURL("**/app");
+  });
+
+  test("user can log out", async ({ page }) => {
+    await signIn(page);
+
+    await page.getByRole("button", { name: "Open account menu" }).click();
+    await page.getByRole("menuitem", { name: /sign out/iu }).click();
     await page.waitForURL("**/login");
   });
 });

@@ -1,38 +1,79 @@
 import { expect, test } from "@playwright/test";
 
-import { waitForHydration } from "./helpers";
-
-const ACTIVE = {
-  email: "henderson.briggs@geeknet.net",
-  password: "23derd*334",
-};
+import { activeUser, signIn } from "./helpers";
 
 test.describe("account", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/login");
-    await waitForHydration(page);
-    await page.getByLabel("Email").fill(ACTIVE.email);
-    await page.getByLabel("Password").fill(ACTIVE.password);
-    await page.getByRole("button", { name: /sign in/iu }).click();
-    await page.waitForURL("**/app");
+    await signIn(page);
   });
 
   test("shows profile details", async ({ page }) => {
     await expect(page.getByText("Henderson Briggs")).toBeVisible();
-    await expect(page.getByText(ACTIVE.email).first()).toBeVisible();
+    await expect(page.getByText(activeUser.email).last()).toBeVisible();
   });
 
-  test("user can check balance", async ({ page }) => {
-    await page.getByRole("button", { name: /check balance/iu }).click();
-    await expect(page.getByText(/^\$/u)).toBeVisible();
+  test("shows balance by default and lets users hide it", async ({ page }) => {
+    await expect(page.getByLabel("$3,585.69")).toBeVisible();
+
+    await page.getByRole("button", { name: "Hide balance" }).click();
+    await expect(page.getByText("••••••")).toBeVisible();
+
+    await page.reload();
+    await expect(page.getByText("••••••")).toBeVisible();
   });
 
   test("user can update profile details", async ({ page }) => {
-    const phoneField = page.getByLabel("Phone");
-    const next = `+1 (555) 000-${Math.floor(1000 + Math.random() * 8999)}`;
-    await phoneField.fill(next);
+    await page.getByRole("link", { name: /edit details/iu }).click();
+    await page.waitForURL("**/app/edit");
+
+    const firstNameField = page.getByLabel("First name");
+    const next = `Updated${Math.floor(1000 + Math.random() * 8999)}`;
+    await firstNameField.fill(next);
     await page.getByRole("button", { name: /save changes/iu }).click();
-    await expect(page.getByText(/profile updated/iu)).toBeVisible();
-    await expect(phoneField).toHaveValue(next);
+    await expect(page.getByText(/profile details updated/iu)).toBeVisible();
+    await expect(page.getByText(`${next} Briggs`).last()).toBeVisible();
+  });
+
+  test("wrong current password stays on settings and shows a field error", async ({
+    page,
+  }) => {
+    await page.getByRole("link", { name: /edit details/iu }).click();
+    await page.waitForURL("**/app/edit");
+
+    await page.getByLabel("Current password").fill("wrong-password");
+    await page
+      .getByRole("textbox", { exact: true, name: "New password" })
+      .fill("new-password");
+    await page.getByLabel("Confirm new password").fill("new-password");
+    await page.getByRole("button", { name: /update password/iu }).click();
+
+    await expect(
+      page
+        .getByRole("alert")
+        .filter({ hasText: "Current password is incorrect" })
+    ).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/edit/u);
+    await expect(
+      page.getByRole("button", { name: "Open account menu" })
+    ).toBeVisible();
+  });
+
+  test("protected user 401 sends the session back to login", async ({
+    page,
+  }) => {
+    await page.route("**/users/me", (route) =>
+      route.fulfill({
+        body: JSON.stringify({
+          error: {
+            message: "Authentication required",
+          },
+        }),
+        contentType: "application/json",
+        status: 401,
+      })
+    );
+
+    await page.reload();
+    await page.waitForURL("**/login");
   });
 });

@@ -9,6 +9,7 @@ import { Spinner } from "@workspace/ui/components/spinner";
 import { useForm } from "react-hook-form";
 
 import { useUpdateProfile } from "../hooks/use-update-profile";
+import { normalizePhoneForInput } from "../lib/format-phone";
 import { ProfileField } from "./profile-field";
 import { ProfilePhoneField } from "./profile-phone-field";
 
@@ -24,7 +25,7 @@ const getProfileFormValues = (user: UserProfile): UpdateProfileRequest => ({
   eyeColor: user.eyeColor,
   firstName: user.firstName,
   lastName: user.lastName,
-  phone: user.phone,
+  phone: normalizePhoneForInput(user.phone),
 });
 
 export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
@@ -42,6 +43,7 @@ export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
       </p>
       <form
         className="mt-6 grid gap-4 sm:grid-cols-2"
+        noValidate
         onSubmit={form.handleSubmit((values) =>
           updateProfile.mutate(values, { onSuccess: onSaved })
         )}
