@@ -82,8 +82,12 @@ export const ProfileForm = ({ onSaved, user }: ProfileFormProps) => {
           label="Address"
           name="address"
         />
-        <div className="sm:col-span-2">
-          <Button disabled={updateProfile.isPending} type="submit">
+        <div className="sm:col-span-2 sm:flex sm:justify-end">
+          <Button
+            className="w-full sm:w-auto"
+            disabled={updateProfile.isPending}
+            type="submit"
+          >
             {updateProfile.isPending ? <Spinner /> : null}
             Save changes
           </Button>

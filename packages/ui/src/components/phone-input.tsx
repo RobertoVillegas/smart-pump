@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@workspace/ui/components/popover";
-import { ScrollArea } from "@workspace/ui/components/scroll-area";
 import { cn } from "@workspace/ui/lib/utils";
 import { CheckIcon, ChevronsUpDownIcon } from "lucide-react";
 import * as React from "react";
@@ -72,6 +71,20 @@ interface CountrySelectOptionProps extends RPNInput.FlagProps {
   selectedCountry: RPNInput.Country;
 }
 
+const setCountryItemRef = (element: HTMLDivElement | null) => {
+  if (!element) {
+    return;
+  }
+
+  // cmdk calls scrollIntoView on the selected item after mount. In a portaled
+  // popover that can scroll the page, so keep the scroll scoped to the list.
+  element.scrollIntoView = () => {
+    element
+      .closest("[data-slot='command-list']")
+      ?.scrollTo({ top: element.offsetTop });
+  };
+};
+
 const CountrySelectOption = ({
   country,
   countryName,
@@ -85,7 +98,12 @@ const CountrySelectOption = ({
   };
 
   return (
-    <CommandItem className="gap-2" onSelect={handleSelect}>
+    <CommandItem
+      ref={setCountryItemRef}
+      className="gap-2"
+      onSelect={handleSelect}
+      value={country}
+    >
       <FlagComponent country={country} countryName={countryName} />
       <span className="flex-1 text-sm">{countryName}</span>
       <span className="text-foreground/50 text-sm">
@@ -113,6 +131,7 @@ const CountrySelect = ({
 
   return (
     <Popover
+      modal
       open={isOpen}
       onOpenChange={(open) => {
         setIsOpen(open);
@@ -135,38 +154,44 @@ const CountrySelect = ({
           className={cn("-mr-2 size-4 opacity-50", disabled && "hidden")}
         />
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] gap-0 p-0">
-        <Command>
+      <PopoverContent
+        className="w-[300px] gap-0 p-0"
+        collisionAvoidance={{
+          align: "shift",
+          fallbackAxisSide: "none",
+          side: "flip",
+        }}
+        collisionPadding={12}
+        initialFocus={(openType) => openType === "keyboard"}
+        side="top"
+      >
+        <Command value={selectedCountry}>
           <CommandInput
             placeholder="Search country..."
             value={searchValue}
             onValueChange={(nextValue) => {
               setSearchValue(nextValue);
               requestAnimationFrame(() => {
-                scrollAreaRef.current
-                  ?.querySelector("[data-slot='scroll-area-viewport']")
-                  ?.scrollTo({ top: 0 });
+                scrollAreaRef.current?.scrollTo({ top: 0 });
               });
             }}
           />
-          <CommandList>
-            <ScrollArea ref={scrollAreaRef} className="h-72">
-              <CommandEmpty>No country found.</CommandEmpty>
-              <CommandGroup>
-                {countryList.map(({ label, value }) =>
-                  value ? (
-                    <CountrySelectOption
-                      key={value}
-                      country={value}
-                      countryName={label}
-                      selectedCountry={selectedCountry}
-                      onChange={onChange}
-                      onSelectComplete={() => setIsOpen(false)}
-                    />
-                  ) : null
-                )}
-              </CommandGroup>
-            </ScrollArea>
+          <CommandList ref={scrollAreaRef}>
+            <CommandEmpty>No country found.</CommandEmpty>
+            <CommandGroup>
+              {countryList.map(({ label, value }) =>
+                value ? (
+                  <CountrySelectOption
+                    key={value}
+                    country={value}
+                    countryName={label}
+                    selectedCountry={selectedCountry}
+                    onChange={onChange}
+                    onSelectComplete={() => setIsOpen(false)}
+                  />
+                ) : null
+              )}
+            </CommandGroup>
           </CommandList>
         </Command>
       </PopoverContent>

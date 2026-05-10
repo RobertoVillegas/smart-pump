@@ -101,8 +101,12 @@ export const PasswordForm = () => {
             </Field>
           )}
         />
-        <div className="sm:col-span-2">
-          <Button disabled={changePassword.isPending} type="submit">
+        <div className="sm:col-span-2 sm:flex sm:justify-end">
+          <Button
+            className="w-full sm:w-auto"
+            disabled={changePassword.isPending}
+            type="submit"
+          >
             {changePassword.isPending ? <Spinner /> : null}
             Update password
           </Button>

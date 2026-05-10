@@ -65,7 +65,7 @@ const EditAccountPage = () => {
     <AppShell
       user={{ email: user.email, name: `${user.firstName} ${user.lastName}` }}
     >
-      <div className="mb-10">
+      <div className="mx-auto mb-10 w-full max-w-4xl">
         <Link className={buttonVariants({ variant: "ghost" })} to="/app">
           <ArrowLeftIcon aria-hidden="true" />
           Account
@@ -77,7 +77,7 @@ const EditAccountPage = () => {
           Update the profile details shown on your account.
         </p>
       </div>
-      <div className="grid max-w-3xl gap-8">
+      <div className="mx-auto grid w-full max-w-4xl gap-8">
         <ProfileForm
           user={user}
           onSaved={() => {
