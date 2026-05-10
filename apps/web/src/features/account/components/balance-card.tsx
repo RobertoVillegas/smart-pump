@@ -65,7 +65,7 @@ const BalanceAmount = ({
   useLayoutEffect(() => {
     const container = containerRef.current;
 
-    if (!container) {
+    if (!container || measuredSize !== null) {
       return;
     }
 
@@ -79,7 +79,7 @@ const BalanceAmount = ({
           ? preferredSize
           : Math.max(
               MIN_BALANCE_FONT_SIZE,
-              Math.floor(preferredSize * (availableWidth / measuredWidth))
+              Math.round(preferredSize * (availableWidth / measuredWidth))
             );
 
       setFontSize(newSize);
@@ -96,7 +96,7 @@ const BalanceAmount = ({
     observer.observe(container);
 
     return () => observer.disconnect();
-  }, [onMeasured]);
+  }, [measuredSize, onMeasured]);
 
   return (
     <p
